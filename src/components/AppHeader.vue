@@ -18,15 +18,16 @@
 
     <div class="container">
       <header>
-        <h1>VeChain Name Service</h1>
-        <div class="network mainnet" v-if="networkId === 74">
-          Mainnet
-        </div>
-        <div class="network testnet" v-else-if="networkId === 39">
-          Testnet
-        </div>
-        <div class="network" v-else>
-          Unknown Network
+        <h1>
+          <router-link to="/">VeChain Name Service</router-link>
+        </h1>
+        <div v-if="connex">
+          <div class="network mainnet" v-if="networkId === 74">
+            Mainnet
+          </div>
+          <div class="network testnet" v-else-if="networkId === 39">
+            Testnet
+          </div>
         </div>
       </header>
     </div>
@@ -42,6 +43,7 @@ export default {
   data() {
     return {
       networkId: null,
+      connex: !!window.connex,
     }
   },
   async mounted() {
@@ -52,6 +54,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  a {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
   .header {
     color: #ffffff;
     height: 100px;
