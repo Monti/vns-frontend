@@ -2,16 +2,15 @@
   <div class="container">
     <div class="description">
       <h2>What is it?</h2>
-      <p>The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain. VNS eliminates the need to copy or type long addresses.</p>
+      <p>
+        The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain. VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
+      </p>
     </div>
     <form @submit="submit">
       <div class="input">
         <input type="text" v-model="domain" placeholder="search for your domain" />
       </div>
     </form>
-    <div class="description">
-      VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
-    </div>
   </div>
 </template>
 
@@ -40,6 +39,10 @@ export default {
   .description {
     font-family: 'Roboto Mono';
     margin: 50px 0;;
+
+    p {
+      line-height: 1.5rem;
+    }
 
     span {
       border-radius: 2px;
