@@ -31,6 +31,7 @@ export default {
   }
 
   body {
+    color: #0a0c27;
     background-color: #FDFDFD;
     margin: 0;
   }
@@ -42,5 +43,9 @@ export default {
   .container {
     max-width: 740px;
     margin: 0 auto;
+  }
+
+  .no-doodle-support css-doodle {
+    display: none;
   }
 </style>

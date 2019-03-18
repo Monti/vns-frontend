@@ -44,7 +44,7 @@ export default {
   
     &::after {
       align-items: center;
-      background-color: #FF1F54;
+      background-color: #0a0c27;
       border-radius: 0 3px 3px 0;
       color: #fff;
       content: ".vet";
@@ -62,8 +62,8 @@ export default {
   input {
     background-color: transparent;
     border-radius: 3px;
-    border: 2px solid #FF1F54;
-    color: #FF1F54;
+    border: 2px solid #0a0c27;
+    color: #0a0c27;
     font-family: 'Roboto Mono';
     font-size: 1rem;
     padding: 20px 100px 20px 20px;
