@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vechain/picasso": "^1.0.4",
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "css-doodle": "^0.6.0",
     "vue": "^2.6.6",
