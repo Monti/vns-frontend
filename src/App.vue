@@ -26,15 +26,17 @@ export default {
   html,
   body {
     height: 100%;
+    font-size: 16px;
   }
 
   body {
     color: #0a0c27;
-    background-color: #FDFDFD;
+    background-color: #FFFFFF;
+    font-family: 'Roboto Mono';
     margin: 0;
   }
 
-  #app {
+  h2, h3 {
     font-family: 'Rubik', sans-serif;
   }
 
@@ -57,6 +59,7 @@ export default {
       color: #fff;
       content: ".vet";
       display: flex;
+      font-family: 'Roboto Mono';
       height: 100%;
       justify-content: center;
       position: absolute;

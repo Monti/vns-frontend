@@ -1,45 +1,57 @@
 <template>
-  <div class="container">
-    <div class="description">
-      <h2>What is it?</h2>
-      <p>
-        The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain. VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
-      </p>
-    </div>
-    <form @submit="submit">
-      <div class="input">
-        <input type="text" v-model="domain" placeholder="search for your domain" />
+  <div>
+    <div class="hero">
+      <div class="description">
+        <h2>Human Readable Addresses</h2>
+        <p>
+          The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain.
+          VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
+        </p>
       </div>
-    </form>
+      <div class="image">
+        <img src="@/assets/creation.jpg" />
+      </div>
+    </div>
+    <div class="container">
+      <form @submit="submit">
+        <div class="input">
+          <input type="text" v-model="domain" placeholder="search for your domain" />
+        </div>
+      </form>
+
+      <DomainCard :domain="domain" />
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: "Home",
-  data() {
-    return {
-      domain: ''
-    }
-  },
-  methods: {
-    submit(e) {
-      e.preventDefault();
-      this.$router.push({ name: 'search', params: { domain: this.domain }});
+  import DomainCard from '@/components/DomainCard';
+
+  export default {
+    name: "Home",
+    components: {
+      DomainCard
+    },
+    data() {
+      return {
+        domain: ''
+      }
+    },
+    methods: {
+      submit(e) {
+        e.preventDefault();
+        const doodle = document.getElementById('doodle');
+      }
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>
-  a {
-    display: block;
-    text-align: right;
-  }
   .hero {
+    align-items: center;
     display: flex;
     max-width: 980px;
-    margin: 0 auto;
+    margin: 50px auto;
   }
 
   form {
@@ -48,7 +60,7 @@ export default {
   }
 
   .image {
-    width: 500px;
+    flex: 4;
     margin: 0 auto;
 
     img {
@@ -57,10 +69,11 @@ export default {
   }
 
   .description {
-    flex: 4;
-    font-family: 'Roboto Mono';
+    flex: 3;
+    position: relative;
+    z-index: 1;
 
-    p {
+    p, a {
       line-height: 1.5rem;
       font-size: 0.9rem;
     }
@@ -72,5 +85,4 @@ export default {
       padding: 0 5px;
     }
   }
-
 </style>

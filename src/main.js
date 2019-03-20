@@ -5,8 +5,8 @@ import 'css-doodle';
 
 import App from './App.vue';
 
-import Search from '@/pages/Search.vue';
 import Home from '@/pages/Home.vue';
+import Manage from '@/pages/Manage.vue';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -17,7 +17,7 @@ if (!window.customElements || !document.head.attachShadow) {
 
 const routes = [
   { path: '/', component: Home, name: 'home' },
-  { path: '/search/:domain', component: Search, name: 'search' },
+  { path: '/manage', component: Manage, name: 'manage' },
 ];
 
 const router = new VueRouter({

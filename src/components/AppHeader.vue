@@ -2,18 +2,7 @@
   <div class="header">
 
     <div class="background">
-      <css-doodle>
-        :doodle {
-          @grid: 100 / 100%;
-          background: #0a0c27;
-          font-family: sans-serif;
-        }
-
-        :after { content: \@hex(@rand(0x2500, 0x257f));
-          color: hsla(@r(360), 70%, 70%, @r(.5));
-          font-size: 3vmax;
-        };
-      </css-doodle>
+      <Doodle />
     </div>
 
     <div class="container">
@@ -36,33 +25,39 @@
 </template>
 
 <script>
-import { hexToBytes } from 'web3-utils';
+  import { hexToBytes } from 'web3-utils';
+  import Doodle from '@/components/Doodle';
 
-export default {
-  name: 'AppHeader',
-  data() {
-    return {
-      networkId: null,
-      connex: !!window.connex,
+  export default {
+    name: 'AppHeader',
+    components: {
+      Doodle
+    },
+    data() {
+      return {
+        networkId: null,
+        connex: !!window.connex,
+      }
+    },
+    async mounted() {
+      const block = await window.connex.thor.block(0).get();
+      this.networkId = hexToBytes(block.id).pop();
     }
-  },
-  async mounted() {
-    const block = await window.connex.thor.block(0).get();
-    this.networkId = hexToBytes(block.id).pop();
   }
-}
 </script>
 
 <style scoped lang="scss">
   a {
-    color: #ffffff;
+    background-color: #ffffff;
+    color: #0a0c27;
     text-decoration: none;
   }
 
   .header {
-    color: #ffffff;
+    border: 1px solid #AEACFB;
+    color: #0a0c27;
+    font-family: 'Rubik', sans-serif;
     height: 100px;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
     position: relative;
     overflow: hidden;
@@ -73,7 +68,7 @@ export default {
   }
 
   .background {
-    background-color: #0a0c27;
+    /* background-color: #0a0c27; */
     bottom: 0;
     left: 0;
     position: absolute;
@@ -88,6 +83,7 @@ export default {
   }
   
   .network {
+    background-color: #ffffff;
     align-items: center;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -103,6 +99,7 @@ export default {
 
     &.mainnet::after {
       background-color: #02D576;
+      outline: 3px solid #ffffff;
     }
 
     &.testnet::after {
