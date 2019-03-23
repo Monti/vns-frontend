@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import WebFont from 'webfontloader';
+import VueScrollTo from 'vue-scrollto';
 import 'css-doodle';
 
 import App from './App.vue';
@@ -9,7 +10,7 @@ import Home from '@/pages/Home.vue';
 import Manage from '@/pages/Manage.vue';
 
 Vue.config.productionTip = false;
-Vue.use(VueRouter);
+Vue.use(VueRouter, VueScrollTo);
 
 if (!window.customElements || !document.head.attachShadow) {
   document.body.classList.add('no-doodle-support');
@@ -25,11 +26,13 @@ const router = new VueRouter({
   routes,
 });
 
+Vue.prototype.$address = '0x6cbBD5859ffA51D888578eF7dc32f1258b497dAD';
+
 WebFont.load({
   google: {
     families: [
       'Rubik:500,700,900',
-      'Roboto Mono:300,400'
+      'Roboto Mono:300,400,500,500i,700,700i'
     ]
   }
 });

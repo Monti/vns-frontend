@@ -1,31 +1,18 @@
 <template>
   <div class="container">
     <h2>{{ domain }}</h2>
-    <div class="owner">
-      owner:
-      <div class="signer">
-        <div class="avatar" :style="{ background: `no-repeat url('data:image/svg+xml;utf8,${avatar('0x1965B7ed6A6a1c95dB5f02e9a91E8B658E6A1947')}')`}">
-        </div>
-        <small>0x1965B7ed6A6a1c95dB5f02e9a91E8B658E6A1947</small>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
+  import Registry from '@/build/contracts/Registry.json';
   import { picasso } from '@vechain/picasso';
 
   export default {
-    name: "Name",
-    data() {
-      return {
-        domain: this.$route.params.domain
-      }
-    },
-    methods: {
-      avatar(address) {
-        return picasso(address);
-      }
+    name: "Manage",
+    mounted() {
+      const startAuctionABI = _.find(Registry.abi, { name: 'startAuction' });
+      const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
     }
   }
 </script>

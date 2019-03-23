@@ -103,7 +103,7 @@
     }
 
     &.testnet::after {
-      background-color: #E87D9B;
+      background-color: #FFAA6E;
     }
   }
 
