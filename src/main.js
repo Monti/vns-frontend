@@ -4,6 +4,8 @@ import WebFont from 'webfontloader';
 import VueScrollTo from 'vue-scrollto';
 import 'css-doodle';
 
+import Registry from '@/build/contracts/Registry.json';
+
 import App from './App.vue';
 
 import Home from '@/pages/Home.vue';
@@ -26,7 +28,9 @@ const router = new VueRouter({
   routes,
 });
 
-Vue.prototype.$address = '0x6cbBD5859ffA51D888578eF7dc32f1258b497dAD';
+Vue.prototype.$address = '0x1317cf4d63D96E64836758871F788fe664d51B98';
+Vue.prototype.$contract = Registry;
+// console.log(Registry.bytecode);
 
 WebFont.load({
   google: {

@@ -59,6 +59,7 @@
     font-family: 'Rubik', sans-serif;
     height: 100px;
     letter-spacing: 1px;
+    margin-bottom: 50px;
     position: relative;
     overflow: hidden;
 

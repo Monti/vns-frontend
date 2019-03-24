@@ -36,7 +36,7 @@ export default {
     margin: 0;
   }
 
-  h2, h3 {
+  h2, h3, h4 {
     font-family: 'Rubik', sans-serif;
   }
 

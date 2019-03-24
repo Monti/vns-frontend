@@ -2,42 +2,57 @@
   <div>
     <div class="card">
       <div class="title">
-        <h3>{{ domain }}.vet</h3>
+        <h3>{{ domain }}<span>.vet</span></h3>
         <div>is available</div>
       </div>
 
-      <div class="info">
-        <div class="price">
-          2000 VET
-          <div>
-            <small>+ gas fee</small>
+      <section>
+        <div class="info">
+          <div class="price">
+            2000 VET
+            <div>
+              <small>+ gas fee</small>
+            </div>
+          </div>
+          <div class="actions">
+            <Button @onClick="startAuction">Start Auction</Button>
+            <small>then</small>
+            <Button @onClick="addBid">Add A Bid</Button>
+
+            <div v-if="bid" class="addBid">
+              <input type="text" v-model="secret" placeholder="type your secret" autofocus />
+              <Button @onClick="bidOnAuction">Add Bid</Button>
+            </div>
+
           </div>
         </div>
-        <Button @onClick="startAuction">Buy</Button>
-        <Button @onClick="finalizeAuction">End</Button>
-        <Button @onClick="bidOnAuction">Bid</Button>
-      </div>
+      </section>
     </div>
+
+    <Button @onClick="finalizeBidding">Finalize Bidding</Button>
+    <Button @onClick="finalizeAuction">Finalize Auction</Button>
+    <Button @onClick="revealBid">Reveal Bid</Button>
+
   </div>
 </template>
 
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei } from 'web3-utils';
+  import { toWei, sha3 } from 'web3-utils';
 
   import tx from '@/mixins/tx';
+  import getAuctionID from '@/mixins/getAuctionID';
 
   import Doodle from '@/components/Doodle';
   import Button from '@/components/Button';
 
-  import Registry from '@/build/contracts/Registry.json';
   import { Star } from '@/components/Icons';
 
   export default {
     name: "AvailableDomain",
-    props: ['domain', 'signer'],
-    mixins: [tx],
+    props: ['domain'],
+    mixins: [tx, getAuctionID],
     components: {
       Button,
       Doodle,
@@ -45,19 +60,28 @@
     },
     data() {
       return {
+        bid: false,
+        secret: null,
         selected: true,
+        auctionID: null,
       }
     },
     mounted() {
       const doodle = document.getElementById('doodle');
 
+      this.getAuctionID().then(({ decoded }) => {
+        this.auctionID = decoded[0];
+      });
     },
     methods: {
       avatar() {
         return picasso('0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed');
       },
+      addBid() {
+        this.bid = true;
+      },
       startAuction() {
-        const startAuctionABI = _.find(Registry.abi, { name: 'startAuction' });
+        const startAuctionABI = find(this.$contract.abi, { name: 'startAuction' });
         const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
 
         const comment = 'start auction';
@@ -66,35 +90,67 @@
         this.tx({
           clause,
           comment,
-          signer: this.signer,
+          signer: window.signer,
+        });
+      },
+      revealBid() {
+        const revealBidABI = find(this.$contract.abi, { name: 'revealBid' });
+        const revealBid = window.connex.thor.account(this.$address).method(revealBidABI);
+
+        const comment = 'reveal';
+
+        const value = toWei('5', 'ether');
+        const secret = sha3('ken');
+        const clause = revealBid.value(value).asClause(this.auctionID, secret);
+
+        this.tx({
+          clause,
+          comment,
+          signer: window.signer,
+        });
+      },
+      finalizeBidding() {
+        const finalizeBiddingABI = find(this.$contract.abi, { name: 'finalizeBidding' });
+        const finalizeBidding = window.connex.thor.account(this.$address).method(finalizeBiddingABI);
+
+        const comment = 'end auction';
+        const clause = finalizeBidding.asClause(1)
+
+        this.tx({
+          clause,
+          comment,
+          signer: window.signer,
         });
       },
       finalizeAuction() {
-        const finalizeAuctionABI = _.find(Registry.abi, { name: 'finalizeAuction' });
+        const finalizeAuctionABI = find(this.$contract.abi, { name: 'finalizeAuction' });
         const finalizeAuction = window.connex.thor.account(this.$address).method(finalizeAuctionABI);
 
-        const comment = 'end auction';
-        const clause = finalizeAuction.asClause(1)
+        const comment = 'finalize auction';
+        const clause = finalizeAuction.asClause(this.auctionID)
 
         this.tx({
           clause,
           comment,
-          signer: this.signer,
+          signer: window.signer,
         });
       },
       bidOnAuction() {
-        const bidOnAuctionABI = _.find(Registry.abi, { name: 'bidOnAuction' });
+        const bidOnAuctionABI = find(this.$contract.abi, { name: 'bidOnAuction' });
         const bidOnAuction = window.connex.thor.account(this.$address).method(bidOnAuctionABI);
 
         const comment = 'bid auction';
-        const clause = bidOnAuction.value(toWei('10', 'ether')).asClause(1);
+        const value = toWei('5', 'ether');
+
+        const blindedBid = sha3(value, 'ken');
+        const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
 
         this.tx({
           clause,
           comment,
-          signer: this.signer,
+          signer: window.signer,
         });
-      }
+      },
     }
   }
 </script>
@@ -104,6 +160,7 @@
     div {
       color: #ffa56d;
     }
+
   }
   
   .unavailable {
@@ -149,4 +206,30 @@
     display: flex;
     justify-content: flex-end;
   }
+
+  .actions {
+    align-items: center;
+    display: flex;
+    position: relative;
+
+    small {
+      margin: 0 20px;
+    }
+  }
+
+  .addBid {
+    position: absolute;
+    text-align: right;
+    top: 100%;
+    margin-top: 20px;
+    width: 100%;
+
+    input {
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+  }
 </style>
+
+
+bid bid bid -> finalize bidding -> reveal bidding -> finalize auction

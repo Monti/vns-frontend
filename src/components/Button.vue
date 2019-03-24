@@ -2,9 +2,10 @@
   <button
     @click="handleClick"
     :class="{
-      noStyling: type === 'noStyling',
       medium: size === 'medium',
       small: size === 'small',
+      noStyling: type === 'noStyling',
+      transparent: type === 'transparent'
     }"
   >
     <slot />
@@ -51,5 +52,9 @@ export default {
   .small {
     font-size: 0.8rem;
     padding: 5px 10px;
+  }
+
+  .transparent {
+    border-color: transparent;
   }
 </style>

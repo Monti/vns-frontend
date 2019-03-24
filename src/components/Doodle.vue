@@ -5,10 +5,10 @@
       @grid: 48 / 100vw;
       }
 
-    @size: 1px calc(100% * @sqrt(2) + 1px);
-    transform: rotate(@p(45deg, -45deg));
-    background: #AEACFB;
-    margin: auto;
+      @size: 1px calc(100% * @sqrt(2) + 1px);
+      transform: rotate(@p(45deg, -45deg));
+      background: #AEACFB;
+      margin: auto;
     </css-doodle>
   </div>
 </template>

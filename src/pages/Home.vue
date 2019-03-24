@@ -1,25 +1,25 @@
 <template>
   <div class="container">
 
-    <div class="hero">
-      <div class="description">
-        <h2>Human Readable Addresses</h2>
-        <p>
-          The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain.
-          VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
-        </p>
-
+    <AppHero>
+      <template v-slot:title>
+        Human Readable Addresses
+      </template>
+      <template v-slot:description>
+        The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain.
+        VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
+      </template>
+      <template v-slot:extra>
         <div class="manage">
           <router-link to="manage">
             <Button size="medium">Manage Domains</Button>
           </router-link>
         </div>
-
-      </div>
-      <div class="image">
+      </template>
+      <template v-slot:image>
         <img src="@/assets/creation.jpg" />
-      </div>
-    </div>
+      </template>
+    </AppHero>
 
     <form @submit.prevent="submit" ref="form">
       <label v-if="errors">
@@ -31,7 +31,7 @@
     </form>
 
     <div v-if="domainAvailable === true && submittedDomain.length > 0">
-      <AvailableDomain :domain="submittedDomain" :signer="signer" />
+      <AvailableDomain :domain="submittedDomain" />
     </div>
 
     <div v-else-if="domainAvailable === false">
@@ -47,24 +47,22 @@
   import { find } from 'lodash';
 
   import AvailableDomain from '@/components/AvailableDomain';
+  import AppHero from '@/components/AppHero';
   import Results from '@/components/Results';
   import Button from '@/components/Button';
-  import Registry from '@/build/contracts/Registry.json';
 
-  // console.log(Registry.bytecode);
-  
   export default {
     name: "Home",
     components: {
-      AvailableDomain,
-      Results,
       Button,
+      Results,
+      AppHero,
+      AvailableDomain,
     },
     mixins: [certify],
     data() {
       return {
         domain: '',
-        signer: null,
         errors: false,
         domainAvailable: null,
         submittedDomain: '',
@@ -81,22 +79,23 @@
 
         const content = 'Confirm that you would like this site to access your account';
 
-        if (this.signer) {
+        if (window.signer) {
           this.resolveDomain();
         } else {
           this.certify(content).then(({ annex: { signer }}) => {
-            this.signer = signer;
+            window.signer = signer;
             this.resolveDomain();
           });
         }
 
       },
       resolveDomain() {
-        const resolveDomainABI = _.find(Registry.abi, { name: 'resolveDomain' });
+        const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
         const resolveDomain = window.connex.thor.account(this.$address).method(resolveDomainABI);
         const form = this.$refs.form;
 
         resolveDomain.call(this.domain).then(({ decoded }) => {
+          console.log(decoded)
           this.domainAvailable = /^0x0+$/.test(decoded['0']);
           this.submittedDomain = this.domain;
           VueScrollTo.scrollTo(form, 500, { offset: -20 });
@@ -111,12 +110,6 @@
     margin-top: 30px;
   }
 
-  .hero {
-    align-items: center;
-    display: flex;
-    margin: 50px auto;
-  }
-
   form {
     text-align: left;
     margin: 50px 0;
@@ -129,33 +122,6 @@
       margin-bottom: 5px;
       position: absolute;
       top: -25px;
-    }
-  }
-
-  .image {
-    flex: 4;
-    margin: 0 auto;
-
-    img {
-      width: 100%;
-    }
-  }
-
-  .description {
-    flex: 3;
-    position: relative;
-    z-index: 1;
-
-    p, a {
-      line-height: 1.5rem;
-      font-size: 0.9rem;
-    }
-
-    span {
-      border-radius: 2px;
-      background-color: #ddd;
-      font-size: 90%;
-      padding: 0 5px;
     }
   }
 </style>
