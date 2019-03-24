@@ -99,9 +99,9 @@
 
         const comment = 'reveal';
 
-        const value = toWei('5', 'ether');
-        const secret = sha3('ken');
-        const clause = revealBid.value(value).asClause(this.auctionID, secret);
+        const userBid = toWei('1', 'ether');
+        const secret = 'ken';  // Must be bytes32
+        const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
 
         this.tx({
           clause,
@@ -141,8 +141,10 @@
 
         const comment = 'bid auction';
         const value = toWei('5', 'ether');
+        const userBid = toWie('1', 'ether');
+        const userSecret = 'ken';
 
-        const blindedBid = sha3(value, 'ken');
+        const blindedBid = sha3(userBid, userSecret);  // Must be bytes32
         const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
 
         this.tx({
