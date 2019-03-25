@@ -28,7 +28,7 @@ const router = new VueRouter({
   routes,
 });
 
-Vue.prototype.$address = '0x1317cf4d63D96E64836758871F788fe664d51B98';
+Vue.prototype.$address = '0x6eaA99Ca9772bB070Cd9706203202221eC0B3F75';
 Vue.prototype.$contract = Registry;
 // console.log(Registry.bytecode);
 

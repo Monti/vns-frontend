@@ -228,6 +228,10 @@ contract Registry is ERC721Full {
             "Cannot reveal before auction has ended, or after reveal period has ended"
         );
 
+        require(
+            a.blindedBid[msg.sender] == keccak256(abi.encodePacked(msg.value, _secret)),
+            "Secret or attached value were incorrect"
+        );
 
         if (msg.value <= a.winningBid) {
             delete(a.blindedBid[msg.sender]);
