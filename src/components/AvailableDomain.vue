@@ -142,7 +142,7 @@
         const comment = 'bid auction';
         const value = toWei('5', 'ether');
         const userBid = toWei('10', 'ether');
-        const userSecret = 'ken';
+        const userSecret = asciiToHex('ken');
 
         const blindedBid = sha3(userBid, userSecret);  // Must be bytes32
         const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
