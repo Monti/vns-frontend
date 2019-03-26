@@ -100,7 +100,7 @@
         const comment = 'reveal';
 
         const userBid = toWei('10', 'ether');
-        const secret = utf8ToHex('ken');  // Must be bytes32
+        const secret = utf8ToHex('ken');
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
         
         // Please log secret, userBid to check the processing is proper
@@ -149,7 +149,7 @@
 
         const userBid = toWei('10', 'ether');
         const userSecret = utf8ToHex('ken');
-        const blindedBid = soliditySha3(userBid, userSecret);  // Must be bytes32
+        const blindedBid = soliditySha3({type: 'uint256', value: userBid}, {type: 'bytes32', value: userSecret});  // Must be bytes32
         
         // Please log userSecret, blindedBid, userBid to check the processing is proper
         console.log(userSecret);
