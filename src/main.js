@@ -28,8 +28,9 @@ const router = new VueRouter({
   routes,
 });
 
-Vue.prototype.$address = '0x6eaA99Ca9772bB070Cd9706203202221eC0B3F75';
+Vue.prototype.$address = '0xD5981fE0845954044A1c6ba068Db2Df44f8122bb';
 Vue.prototype.$contract = Registry;
+
 // console.log(Registry.bytecode);
 
 WebFont.load({

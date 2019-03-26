@@ -39,7 +39,7 @@
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei, sha3, asciiToHex } from 'web3-utils';
+  import { toWei, soliditySha3, asciiToHex } from 'web3-utils';
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
@@ -141,10 +141,11 @@
 
         const comment = 'bid auction';
         const value = toWei('5', 'ether');
-        const userBid = toWei('10', 'ether');
-        const userSecret = asciiToHex('ken');
 
-        const blindedBid = sha3(userBid, userSecret);  // Must be bytes32
+        const userBid = toWei('10', 'ether');
+        const userSecret = 'ken';
+        const blindedBid = soliditySha3(userBid, userSecret);  // Must be bytes32
+
         const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
 
         this.tx({

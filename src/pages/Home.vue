@@ -95,7 +95,6 @@
         const form = this.$refs.form;
 
         resolveDomain.call(this.domain).then(({ decoded }) => {
-          console.log(decoded)
           this.domainAvailable = /^0x0+$/.test(decoded['0']);
           this.submittedDomain = this.domain;
           VueScrollTo.scrollTo(form, 500, { offset: -20 });
