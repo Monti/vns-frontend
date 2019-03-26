@@ -39,7 +39,7 @@
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei, soliditySha3, asciiToHex } from 'web3-utils';
+  import { toWei, soliditySha3, utf8ToHex } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
@@ -100,8 +100,13 @@
         const comment = 'reveal';
 
         const userBid = toWei('10', 'ether');
-        const secret = asciiToHex('ken');  // Must be bytes32
+        const secret = utf8ToHex('ken');  // Must be bytes32
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
+        
+        // Please log secret, userBid to check the processing is proper
+        console.log(secret);
+        console.log(userBid);
+        // Remove after issues are resolved
 
         this.tx({
           clause,
@@ -143,8 +148,14 @@
         const value = toWei('5', 'ether');
 
         const userBid = toWei('10', 'ether');
-        const userSecret = 'ken';
+        const userSecret = utf8ToHex('ken');
         const blindedBid = soliditySha3(userBid, userSecret);  // Must be bytes32
+        
+        // Please log userSecret, blindedBid, userBid to check the processing is proper
+        console.log(userSecret);
+        console.log(userBid);
+        console.log(blindedBid);
+        // Remove after issues are resolved
 
         const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
 
