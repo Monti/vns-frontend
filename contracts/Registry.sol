@@ -69,7 +69,7 @@ contract Registry is ERC721Full {
     uint private _collectedFees;
     uint private _costPerYear = 1 ether;
     uint private _behaviourBond = 5 ether;
-    uint private _biddingTime = 10 minutes;
+    uint private _biddingTime = 5 minutes;
     uint private _revealTime = 5 minutes;
 
     // View Functions

@@ -39,8 +39,10 @@
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei, soliditySha3, utf8ToHex } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
-  import { encodeParameter } from 'web3-eth-abi'; // UTF-8 is the default for ethereum related strings
+  import { toWei, soliditySha3, fromAscii } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
+  import { AbiCoder } from 'web3-eth-abi'; // UTF-8 is the default for ethereum related strings
+
+  const abi = new AbiCoder()
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
@@ -101,7 +103,7 @@
         const comment = 'reveal';
 
         const userBid = toWei('10', 'ether');
-        const secret = encodeParameter('bytes32', 'ken');
+        const secret = abi.encodeParameter('bytes32', fromAscii('ken'));
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
         
         // Please log secret, userBid to check the processing is proper
@@ -149,7 +151,7 @@
         const value = toWei('5', 'ether');
 
         const userBid = toWei('10', 'ether');
-        const userSecret = encodeParameter('bytes32', 'ken');
+        const userSecret = abi.encodeParameter('bytes32', fromAscii('ken'));
         const blindedBid = soliditySha3({type: 'uint256', value: userBid}, {type: 'bytes32', value: userSecret});  // Must be bytes32
         
         // Please log userSecret, blindedBid, userBid to check the processing is proper
