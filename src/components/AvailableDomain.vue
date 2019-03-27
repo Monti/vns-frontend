@@ -101,7 +101,7 @@
         const comment = 'reveal';
 
         const userBid = toWei('10', 'ether');
-        const secret = utf8ToHex('ken');
+        const secret = encodeParameter('bytes32', 'ken');
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
         
         // Please log secret, userBid to check the processing is proper
