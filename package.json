@@ -16,6 +16,7 @@
     "vue": "^2.6.6",
     "vue-router": "^3.0.2",
     "vue-scrollto": "^2.15.0",
+    "web3-eth-abi": "^1.0.0-beta.50",
     "web3-utils": "^1.0.0-beta.50",
     "webfontloader": "^1.6.28"
   },

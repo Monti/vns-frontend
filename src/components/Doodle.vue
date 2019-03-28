@@ -2,7 +2,7 @@
   <div class="wrapper">
     <css-doodle id="doodle" class="doodle">
       :doodle {
-      @grid: 48 / 100vw;
+        @grid: 48 / 100vw;
       }
 
       @size: 1px calc(100% * @sqrt(2) + 1px);

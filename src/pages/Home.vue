@@ -25,9 +25,13 @@
       <label v-if="errors">
         <small>Domain has to be more then 7 characters</small>
       </label>
-      <div class="input">
-        <input type="text" v-model="domain" placeholder="search for your domain (press enter)" />
-      </div>
+
+      <AppInput
+        v-model="domain"
+        label=".vet"
+        placeholder="search for your domain (press enter)"
+      />
+
     </form>
 
     <div v-if="domainAvailable === true && submittedDomain.length > 0">
@@ -35,7 +39,10 @@
     </div>
 
     <div v-else-if="domainAvailable === false">
-      <Results :submittedDomain="submittedDomain" />
+      <UnavailableDomain
+        :domain="submittedDomain"
+        :resolver="resolver"
+      />
     </div>
 
   </div>
@@ -46,23 +53,26 @@
   import VueScrollTo from 'vue-scrollto';
   import { find } from 'lodash';
 
-  import AvailableDomain from '@/components/AvailableDomain';
-  import AppHero from '@/components/AppHero';
-  import Results from '@/components/Results';
   import Button from '@/components/Button';
+  import AppHero from '@/components/AppHero';
+  import AppInput from '@/components/AppInput'
+  import AvailableDomain from '@/components/AvailableDomain';
+  import UnavailableDomain from '@/components/UnavailableDomain';
 
   export default {
     name: "Home",
     components: {
       Button,
-      Results,
       AppHero,
+      AppInput,
       AvailableDomain,
+      UnavailableDomain,
     },
     mixins: [certify],
     data() {
       return {
         domain: '',
+        resolver: '',
         errors: false,
         domainAvailable: null,
         submittedDomain: '',
@@ -95,7 +105,8 @@
         const form = this.$refs.form;
 
         resolveDomain.call(this.domain).then(({ decoded }) => {
-          this.domainAvailable = /^0x0+$/.test(decoded['0']);
+          this.resolver = decoded['0'];
+          this.domainAvailable = /^0x0+$/.test(this.resolver);
           this.submittedDomain = this.domain;
           VueScrollTo.scrollTo(form, 500, { offset: -20 });
         });

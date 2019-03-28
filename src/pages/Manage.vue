@@ -54,14 +54,14 @@
     mounted() {
       const content = 'Confirm that you would like this site to access your account';
 
-      // if (window.signer) {
-      //   this.getAuctions();
-      // } else {
-      //   this.certify(content).then(({ annex: { signer }}) => {
-      //     window.signer = signer;
-      //     this.getAuctions();
-      //   });
-      // }
+      if (window.signer) {
+        this.tokensOfOwner();
+      } else {
+        this.certify(content).then(({ annex: { signer }}) => {
+          window.signer = signer;
+          this.tokensOfOwner(signer);
+        });
+      }
     },
     methods: {
       getAuctions() {
@@ -74,6 +74,14 @@
           Promise.all(auctions).then(data => {
             console.log(data);
           });
+        });
+      },
+      tokensOfOwner() {
+        const tokensOfOwnerABI = find(this.$contract.abi, { name: 'tokensOfOwner' });
+        const tokensOfOwner = window.connex.thor.account(this.$address).method(tokensOfOwnerABI);
+
+        tokensOfOwner.call(signer).then(({ decoded }) => {
+          console.log(decoded)
         });
       },
       getDomain(id) {

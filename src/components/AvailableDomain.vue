@@ -20,7 +20,12 @@
             <Button @onClick="addBid">Add A Bid</Button>
 
             <div v-if="bid" class="addBid">
-              <input type="text" v-model="secret" placeholder="type your secret" autofocus />
+              <AppInput
+                v-model="secret"
+                placeholder="type your secret"
+                autofocus="true"
+              />
+
               <Button @onClick="bidOnAuction">Add Bid</Button>
             </div>
 
@@ -39,14 +44,14 @@
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei, soliditySha3, fromAscii } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
+  import { toWei, soliditySha3 } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
   import { AbiCoder } from 'web3-eth-abi'; // UTF-8 is the default for ethereum related strings
 
-  const abi = new AbiCoder()
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
 
+  import AppInput from '@/components/AppInput'
   import Doodle from '@/components/Doodle';
   import Button from '@/components/Button';
 
@@ -57,6 +62,7 @@
     props: ['domain'],
     mixins: [tx, getAuctionID],
     components: {
+      AppInput,
       Button,
       Doodle,
       Star,
@@ -102,8 +108,8 @@
 
         const comment = 'reveal';
 
-        const userBid = toWei('10', 'ether');
-        const secret = abi.encodeParameter('bytes32', fromAscii('ken'));
+        const userBid = toWei('1', 'ether');
+        const secret = soliditySha3('ken');
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
         
         // Please log secret, userBid to check the processing is proper
@@ -150,9 +156,9 @@
         const comment = 'bid auction';
         const value = toWei('5', 'ether');
 
-        const userBid = toWei('10', 'ether');
-        const userSecret = abi.encodeParameter('bytes32', fromAscii('ken'));
-        const blindedBid = soliditySha3({type: 'uint256', value: userBid}, {type: 'bytes32', value: userSecret});  // Must be bytes32
+        const userBid = toWei('1', 'ether');
+        const userSecret = soliditySha3('ken');
+        const blindedBid = soliditySha3(userBid, userSecret);  // Must be bytes32
         
         // Please log userSecret, blindedBid, userBid to check the processing is proper
         console.log(userSecret);
@@ -177,7 +183,6 @@
     div {
       color: #ffa56d;
     }
-
   }
   
   .unavailable {
@@ -241,8 +246,7 @@
     margin-top: 20px;
     width: 100%;
 
-    input {
-      padding: 20px;
+    .input {
       margin-bottom: 20px;
     }
   }

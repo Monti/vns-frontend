@@ -69,7 +69,6 @@
   }
 
   .background {
-    /* background-color: #0a0c27; */
     bottom: 0;
     left: 0;
     position: absolute;

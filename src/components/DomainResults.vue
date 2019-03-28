@@ -1,14 +1,13 @@
 <template>
   <div class="list">
-    <div class="item" v-for="domain in formattedDomains" :key="domain">
+    <div class="item" v-for="domain in genericSubDomains" :key="domain">
       <div>
-        {{ domain }}
+        kenneth-{{ domain }}.vet
       </div>
       <div class="actions">
         <div class="price">
           <small>2000 VET</small>
         </div>
-        <Button size="small">Buy Domain</Button>
       </div>
     </div>
   </div>
@@ -20,17 +19,15 @@
   import genericSubDomains from '@/helpers/generic-subdomains.json';
 
   export default {
-    name: 'Results',
-    props: ['submittedDomain', 'submittedDomain'],
+    name: 'DomainResults',
     components: {
       Button,
     },
-    computed: {
-      formattedDomains() {
-        return genericSubDomains.map(subdomain => `${this.submittedDomain}.${subdomain}.vet`)
+    data() {
+      return {
+        genericSubDomains
       }
     }
-
   }
 </script>
 
