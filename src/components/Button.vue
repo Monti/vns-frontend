@@ -4,8 +4,9 @@
     :class="{
       medium: size === 'medium',
       small: size === 'small',
+      special: type === 'special',
       noStyling: type === 'noStyling',
-      transparent: type === 'transparent'
+      transparent: type === 'transparent',
     }"
   >
     <slot />
@@ -26,11 +27,29 @@ export default {
 
 <style scoped lang="scss">
   button {
+    background-color: transparent;
     border-radius: 3px;
     border: 2px solid #0a0c27;
     cursor: pointer;
     font-size: 1rem;
     padding: 10px 20px;
+    position: relative;
+
+    &.special {
+      &::after {
+        background-color: #FFAA6E;
+        border-radius: 3px;
+        content: "";
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 100%;
+        z-index: -1;
+      }
+    }
+
 
     &:hover {
       border: 2px solid #1D2E9F;
@@ -46,7 +65,7 @@ export default {
 
   .medium {
     font-size: 0.9rem;
-    padding: 5px 10px;
+    padding: 10px 20px;
   }
 
   .small {

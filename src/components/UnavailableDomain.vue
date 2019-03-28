@@ -12,8 +12,6 @@
         </div>
       </div>
     </div>
-    <h3>Here are some examples of other domains</h3>
-    <DomainResults />
   </div>
 </template>
 
@@ -21,14 +19,9 @@
   import { picasso } from '@vechain/picasso';
   import _ from 'lodash';
 
-  import DomainResults from '@/components/DomainResults';
-
   export default {
     name: 'UnavailableDomain',
     props: ['domain', 'resolver'],
-    components: {
-      DomainResults,
-    }
   }
 </script>
 

@@ -14,15 +14,19 @@
 
     <section>
       <h3>Auctions</h3>
-      <div v-for="item in [1, 2, 3, 4, 5]" :key="item" class="auctions">
-        <AppAuction />
+      <div
+        class="auctions"
+        :key="auction[3]"
+        v-for="auction in auctionsWithValue"
+      >
+        <AppAuction :auction="auction" />
       </div>
     </section>
 
     <section>
       <h3>Domains</h3>
-      <div v-for="item in [1, 2, 3, 4, 5]" :key="item" class="domains">
-        <AppDomain />
+      <div v-for="domain in domains" :key="domain[0]" class="domains">
+        <AppDomain :domain="domain" />
       </div>
     </section>
 
@@ -47,6 +51,7 @@
     },
     data() {
       return {
+        domains: [],
         auctions: [],
       }
     },
@@ -56,39 +61,65 @@
 
       if (window.signer) {
         this.tokensOfOwner();
+        this.getUserAuctions();
       } else {
         this.certify(content).then(({ annex: { signer }}) => {
           window.signer = signer;
-          this.tokensOfOwner(signer);
+          this.tokensOfOwner();
+          this.getUserAuctions();
         });
       }
     },
     methods: {
-      getAuctions() {
+      getUserAuctions() {
         const getUserAuctionsABI = find(this.$contract.abi, { name: 'getUserAuctions' });
         const getUserAuctions = window.connex.thor.account(this.$address).method(getUserAuctionsABI);
 
-        getUserAuctions.call(window.signer).then(({ decoded }) => {
-          const auctions = decoded[0].map(id => this.getDomain(id));
+        getUserAuctions.call('0x0d0c5ffcf111b101b051d34636822b27eab7c115').then(({ decoded }) => {
+          const auctions = decoded[0].map(id => this.getAuction(id));
 
           Promise.all(auctions).then(data => {
-            console.log(data);
+            this.auctions = data;
           });
+        });
+      },
+      getAuction(id) {
+        const getAuctionABI = find(this.$contract.abi, { name: 'getAuction' });
+        const getAuction = window.connex.thor.account(this.$address).method(getAuctionABI);
+
+        return getAuction.call(id).then(({ decoded }) => {
+          return {
+            id,
+            ...decoded,
+          }
         });
       },
       tokensOfOwner() {
         const tokensOfOwnerABI = find(this.$contract.abi, { name: 'tokensOfOwner' });
         const tokensOfOwner = window.connex.thor.account(this.$address).method(tokensOfOwnerABI);
 
-        tokensOfOwner.call(signer).then(({ decoded }) => {
-          console.log(decoded)
+        tokensOfOwner.call('0x0d0c5ffcf111b101b051d34636822b27eab7c115').then(({ decoded }) => {
+          const tokens = decoded[0].map(id => this.getDomain(id));
+
+          Promise.all(tokens).then(data => {
+            this.domains = data;
+          });
         });
       },
       getDomain(id) {
         const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
         const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
 
+        return getDomain.call(1).then(({ decoded }) => {
+          return decoded;
+        });
+
         return getDomain.call(id);
+      }
+    },
+    computed: {
+      auctionsWithValue() {
+        return this.auctions.filter(auction => auction[3])
       }
     }
   }

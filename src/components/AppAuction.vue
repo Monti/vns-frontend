@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <div>
-      <div>kenneth.vet</div>
+      <div class="domain">{{ auction[3] }}.vet</div>
+      <small>auction end: {{ auction[2] }}</small>
     </div>
     <div class="actions">
       <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
@@ -15,12 +16,17 @@
   import { find } from 'lodash';
   import { toWei, fromAscii } from 'web3-utils';
 
+  import tx from '@/mixins/tx';
   import Button from '@/components/Button';
 
   export default {
     name: 'AppAuction',
+    mixins: [tx],
+    props: ['auction'],
     components: {
       Button,
+    },
+    mounted() {
     },
     methods: {
       revealBid() {
@@ -29,7 +35,7 @@
 
         const comment = 'reveal';
         const value = toWei('5', 'ether');
-        const clause = revealBid.value(value).asClause(this.auctionID, fromAscii('ken'));
+        const clause = revealBid.value(value).asClause(this.auction.id, fromAscii('ken'));
 
         this.tx({
           clause,
@@ -42,7 +48,7 @@
         const finalizeBidding = window.connex.thor.account(this.$address).method(finalizeBiddingABI);
 
         const comment = 'end auction';
-        const clause = finalizeBidding.asClause(1)
+        const clause = finalizeBidding.asClause(this.auction.id)
 
         this.tx({
           clause,
@@ -55,7 +61,7 @@
         const finalizeAuction = window.connex.thor.account(this.$address).method(finalizeAuctionABI);
 
         const comment = 'finalize auction';
-        const clause = finalizeAuction.asClause(this.auctionID)
+        const clause = finalizeAuction.asClause(this.auction.id)
 
         this.tx({
           clause,
@@ -68,6 +74,10 @@
 </script>
 
 <style lang="scss" scoped>
+  .domain {
+    font-weight: bold;
+  }
+
   .wrapper {
     display: flex;
     justify-content: space-between;

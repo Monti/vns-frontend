@@ -12,7 +12,12 @@
       <template v-slot:extra>
         <div class="manage">
           <router-link to="manage">
-            <Button size="medium">Manage Domains</Button>
+            <Button
+              size="medium"
+              type="special"
+            >
+              Manage Domains
+            </Button>
           </router-link>
         </div>
       </template>
@@ -43,6 +48,14 @@
         :domain="submittedDomain"
         :resolver="resolver"
       />
+
+      <h3>Here are some examples of other domains</h3>
+
+      <DomainResults
+        :domain="submittedDomain"
+        @clicked="getDomain"
+      />
+
     </div>
 
   </div>
@@ -56,6 +69,7 @@
   import Button from '@/components/Button';
   import AppHero from '@/components/AppHero';
   import AppInput from '@/components/AppInput'
+  import DomainResults from '@/components/DomainResults';
   import AvailableDomain from '@/components/AvailableDomain';
   import UnavailableDomain from '@/components/UnavailableDomain';
 
@@ -65,6 +79,7 @@
       Button,
       AppHero,
       AppInput,
+      DomainResults,
       AvailableDomain,
       UnavailableDomain,
     },
@@ -79,6 +94,12 @@
       }
     },
     methods: {
+      getDomain(domain) {
+        const form = this.$refs.form;
+        this.domain = domain;
+
+        VueScrollTo.scrollTo(form, 500, { offset: -20 });
+      },
       submit() {
         if (this.domain.length < 7) {
           this.errors = true;

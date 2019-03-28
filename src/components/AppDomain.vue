@@ -1,38 +1,46 @@
 <template>
   <div class="wrapper">
-    Domain.vet
-
-    <div class="domain">
-      <div>owner:</div>
-      <div>
-        <a :href="veforge + owner" target="_blank">
-          {{ owner }}
-        </a>
-      </div>
-    </div>
-
-    <div class="domain">
-      <div>resolver:</div>
-      <div>
-        <a :href="veforge + resolver" target="_blank">
-          {{ resolver }}
-        </a>
-      </div>
-    </div>
+    <router-link
+      :to="{
+        name: 'manageDomain',
+        params: {
+          domain: domain[0]
+        }
+      }"
+    >
+      {{ domain[0] }}.vet
+    </router-link>
 
   </div>
 </template>
 
 <script>
+  import { find } from 'lodash';
+
   export default {
     name: 'AppDomain',
+    props: ['domain'],
     data() {
       return {
         owner: '0x1717171717171728282828291919182828',
         veforge: 'https://explore.veforge.com/accounts/',
-        resolver: '0x1919182876262525626272829292998838'
+        resolver: '',
       }
     },
+    mounted() {
+      const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
+      const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
+
+    },
+    resolveDomain() {
+      const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
+      const resolveDomain = window.connex.thor.account(this.$address).method(resolveDomainABI);
+
+      resolveDomain.call(this.domain).then(({ decoded }) => {
+        this.resolver = decoded['0'];
+        this.domainAvailable = /^0x0+$/.test(this.resolver);
+      });
+    }
   }
 </script>
 

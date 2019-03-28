@@ -10,6 +10,7 @@ import App from './App.vue';
 
 import Home from '@/pages/Home.vue';
 import Manage from '@/pages/Manage.vue';
+import ManageDomain from '@/pages/ManageDomain.vue';
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter, VueScrollTo);
@@ -21,14 +22,15 @@ if (!window.customElements || !document.head.attachShadow) {
 const routes = [
   { path: '/', component: Home, name: 'home' },
   { path: '/manage', component: Manage, name: 'manage' },
+  { path: '/manage/:domain', component: ManageDomain, name: 'manageDomain' },
 ];
 
 const router = new VueRouter({
-  mode: 'history',
   routes,
+  mode: 'history',
 });
 
-Vue.prototype.$address = '0x3731e7ab0Fc2F688A11C8d13ce111f7bf66ae263';
+Vue.prototype.$address = '0x106802537f242826760f029eA887E8719264990A';
 Vue.prototype.$contract = Registry;
 
 // console.log(Registry.bytecode);

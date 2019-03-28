@@ -1,8 +1,13 @@
 <template>
   <div class="list">
-    <div class="item" v-for="domain in genericSubDomains" :key="domain">
+    <div
+      class="item"
+      :key="suffix"
+      @click="getDomain(suffix)"
+      v-for="suffix in genericSuffixes"
+    >
       <div>
-        kenneth-{{ domain }}.vet
+        {{ domain }}-{{ suffix }}.vet
       </div>
       <div class="actions">
         <div class="price">
@@ -16,16 +21,23 @@
 <script>
   import _ from 'lodash';
   import Button from '@/components/Button';
-  import genericSubDomains from '@/helpers/generic-subdomains.json';
+  import genericSuffixes from '@/helpers/generic-suffixes.json';
 
   export default {
     name: 'DomainResults',
     components: {
       Button,
     },
+    props: ['domain'],
     data() {
       return {
-        genericSubDomains
+        genericSuffixes
+      }
+    },
+    methods: {
+      getDomain(suffix) {
+        const domain = `${this.domain}-${suffix}`;
+        this.$emit('clicked', domain)
       }
     }
   }
@@ -34,6 +46,7 @@
 <style lang="scss">
   .item {
     align-items: center;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     padding: 20px;

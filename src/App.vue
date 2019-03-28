@@ -6,14 +6,14 @@
 </template>
 
 <script>
-import AppHeader from './components/AppHeader.vue'
+  import AppHeader from '@/components/AppHeader.vue'
 
-export default {
-  name: 'app',
-  components: {
-    AppHeader,
+  export default {
+    name: 'app',
+    components: {
+      AppHeader,
+    }
   }
-}
 </script>
 
 <style lang="scss">
@@ -43,42 +43,11 @@ export default {
   .container {
     max-width: 980px;
     margin: 0 auto;
+    margin-bottom: 100px;
   }
 
   .no-doodle-support css-doodle {
     display: none;
-  }
-
-  .input {
-    position: relative;
-  
-    &::after {
-      align-items: center;
-      background-color: #0a0c27;
-      border-radius: 0 3px 3px 0;
-      color: #fff;
-      content: ".vet";
-      display: flex;
-      font-family: 'Roboto Mono';
-      height: 100%;
-      justify-content: center;
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 100px;
-      z-index: -1;
-    }
-  }
-
-  input {
-    background-color: transparent;
-    border-radius: 3px;
-    border: 2px solid #0a0c27;
-    color: #0a0c27;
-    font-family: 'Roboto Mono';
-    font-size: 1rem;
-    padding: 20px 100px 20px 20px;
-    width: 100%;
   }
 
   a {

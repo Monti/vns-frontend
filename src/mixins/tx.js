@@ -5,7 +5,6 @@ const tx = {
     tx({ comment, signer, clause }) {
       return signingService
         .signer(signer)
-        .gas(200000)
         .link('https://connex.vecha.in/{txid')
         .comment(comment)
         .request([ clause ]);
