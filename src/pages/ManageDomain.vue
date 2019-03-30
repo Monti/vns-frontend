@@ -62,24 +62,22 @@
     },
     data() {
       return {
+        id: '',
         domain: '',
         resolver: '',
         subdomain: '',
       }
     },
     mounted() {
-      const { id } = this.$route.params;
-
-      this.getDomain(id);
-      this.id = id;
+      this.getDomain(this.$route.params.id);
+      this.id = this.$route.params.id;
     },
     methods: {
       getDomain(id) {
         const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
         const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
 
-        getDomain.call(id)
-        .then(({ decoded }) => {
+        getDomain.call(id).then(({ decoded }) => {
           this.domain = decoded;
           return decoded;
         }).then(data => {

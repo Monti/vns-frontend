@@ -15,9 +15,6 @@
   export default {
     name: 'AppDomain',
     props: ['domain'],
-    mounted() {
-      console.log(this.domain)
-    }
   }
 </script>
 
