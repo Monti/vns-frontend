@@ -32,6 +32,10 @@ export default {
     display: flex;
     margin: 0 auto;
     margin-bottom: 50px;
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      margin-bottom: 20px;
+    }
   }
 
   .description {
@@ -50,6 +54,10 @@ export default {
       font-size: 90%;
       padding: 0 5px;
     }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      flex: 1;
+    }
   }
 
   .image {
@@ -58,6 +66,10 @@ export default {
 
     img {
       width: 100%;
+    }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      display: none;
     }
   }
 

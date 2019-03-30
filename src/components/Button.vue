@@ -50,6 +50,12 @@ export default {
       }
     }
 
+    &:disabled {
+      color: #ccc;
+      border-color: #ccc;
+      pointer-events: none;
+    }
+
 
     &:hover {
       border: 2px solid #1D2E9F;

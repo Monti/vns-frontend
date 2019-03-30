@@ -1,17 +1,12 @@
 <template>
-  <div class="wrapper">
-    <router-link
-      :to="{
-        name: 'manageDomain',
-        params: {
-          domain: domain[0]
-        }
-      }"
-    >
-      {{ domain[0] }}.vet
-    </router-link>
-
-  </div>
+  <router-link class="link" tag="div" :to="{
+    name: 'manageDomain',
+    params: {
+      domain: domain.id
+    }}"
+  >
+    {{ domain[0] }}.vet
+  </router-link>
 </template>
 
 <script>
@@ -20,37 +15,26 @@
   export default {
     name: 'AppDomain',
     props: ['domain'],
-    data() {
-      return {
-        owner: '0x1717171717171728282828291919182828',
-        veforge: 'https://explore.veforge.com/accounts/',
-        resolver: '',
-      }
-    },
     mounted() {
-      const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
-      const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
-
-    },
-    resolveDomain() {
-      const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
-      const resolveDomain = window.connex.thor.account(this.$address).method(resolveDomainABI);
-
-      resolveDomain.call(this.domain).then(({ decoded }) => {
-        this.resolver = decoded['0'];
-        this.domainAvailable = /^0x0+$/.test(this.resolver);
-      });
+      console.log(this.domain)
     }
   }
 </script>
 
 <style lang="scss" scoped>
-  .wrapper {
-    background-color: #fafafa;
-    padding: 20px;
-  }
-
   .domain {
     display: flex;
+  }
+
+  .link {
+    background-color: #fafafa;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 20px;
+
+    &:hover {
+      background-color: #FFAA6E;
+      color: #ffffff;
+    }
   }
 </style>

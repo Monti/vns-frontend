@@ -17,27 +17,40 @@
           <div class="actions">
             <Button @onClick="startAuction">Start Auction</Button>
             <small>then</small>
-            <Button @onClick="addBid">Add A Bid</Button>
+            <Button @onClick="addBid">
+              Add A Bid
+            </Button>
 
             <div v-if="bid" class="addBid">
-              <AppInput
-                v-model="secret"
-                placeholder="type your secret"
-                autofocus="true"
-              />
 
-              <Button @onClick="bidOnAuction">Add Bid</Button>
+              <div v-if="error" class="error">
+                <small>You need to enter a secret</small>
+              </div>
+
+              <form @submit.prevent="submit" ref="form">
+                <AppInput
+                  type="text"
+                  size="medium"
+                  v-model="secret"
+                  autofocus="true"
+                  placeholder="type your secret"
+                />
+
+                <AppInput
+                  type="number"
+                  size="medium"
+                  v-model="bid"
+                  placeholder="type your bid"
+                />
+
+                <Button>Add Bid</Button>
+              </form>
             </div>
 
           </div>
         </div>
       </section>
     </div>
-
-    <Button @onClick="finalizeBidding">Finalize Bidding</Button>
-    <Button @onClick="finalizeAuction">Finalize Auction</Button>
-    <Button @onClick="revealBid">Reveal Bid</Button>
-
   </div>
 </template>
 
@@ -46,7 +59,6 @@
   import { find } from 'lodash';
   import { toWei, soliditySha3 } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
   import { AbiCoder } from 'web3-eth-abi'; // UTF-8 is the default for ethereum related strings
-
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
@@ -69,7 +81,8 @@
     },
     data() {
       return {
-        bid: false,
+        bid: null,
+        error: null,
         secret: null,
         selected: true,
         auctionID: null,
@@ -78,11 +91,14 @@
     mounted() {
       const doodle = document.getElementById('doodle');
 
-      this.getAuctionID().then(({ decoded }) => {
+      this.getAuctionID(this.domain).then(({ decoded }) => {
         this.auctionID = decoded[0];
       });
     },
     methods: {
+      submit() {
+        this.bidOnAuction();
+      },
       avatar() {
         return picasso('0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed');
       },
@@ -94,85 +110,30 @@
         const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
 
         const comment = 'start auction';
-        const clause = startAuction.value(toWei('1', 'ether')).asClause(this.domain);
+        const clause = startAuction.asClause(this.domain);
 
-        this.tx({
-          clause,
-          comment,
-          signer: window.signer,
-        });
-      },
-      revealBid() {
-        const revealBidABI = find(this.$contract.abi, { name: 'revealBid' });
-        const revealBid = window.connex.thor.account(this.$address).method(revealBidABI);
-
-        const comment = 'reveal';
-
-        const userBid = toWei('1', 'ether');
-        const secret = soliditySha3('ken');
-        const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
-        
-        // Please log secret, userBid to check the processing is proper
-        console.log(secret);
-        console.log(userBid);
-        // Remove after issues are resolved
-
-        this.tx({
-          clause,
-          comment,
-          signer: window.signer,
-        });
-      },
-      finalizeBidding() {
-        const finalizeBiddingABI = find(this.$contract.abi, { name: 'finalizeBidding' });
-        const finalizeBidding = window.connex.thor.account(this.$address).method(finalizeBiddingABI);
-
-        const comment = 'end auction';
-        const clause = finalizeBidding.asClause(1)
-
-        this.tx({
-          clause,
-          comment,
-          signer: window.signer,
-        });
-      },
-      finalizeAuction() {
-        const finalizeAuctionABI = find(this.$contract.abi, { name: 'finalizeAuction' });
-        const finalizeAuction = window.connex.thor.account(this.$address).method(finalizeAuctionABI);
-
-        const comment = 'finalize auction';
-        const clause = finalizeAuction.asClause(this.auctionID)
-
-        this.tx({
-          clause,
-          comment,
-          signer: window.signer,
-        });
+        this.tx({ clause, comment, signer: window.signer, });
       },
       bidOnAuction() {
+        if (this.secret === null) {
+          this.error = true;
+
+          return;
+        }
+
         const bidOnAuctionABI = find(this.$contract.abi, { name: 'bidOnAuction' });
         const bidOnAuction = window.connex.thor.account(this.$address).method(bidOnAuctionABI);
 
         const comment = 'bid auction';
-        const value = toWei('5', 'ether');
+        const behaviorBond = toWei('5', 'ether');
 
-        const userBid = toWei('1', 'ether');
-        const userSecret = soliditySha3('ken');
+        const userBid = toWei(this.bid, 'ether');
+        const userSecret = soliditySha3(this.secret);
         const blindedBid = soliditySha3(userBid, userSecret);  // Must be bytes32
         
-        // Please log userSecret, blindedBid, userBid to check the processing is proper
-        console.log(userSecret);
-        console.log(userBid);
-        console.log(blindedBid);
-        // Remove after issues are resolved
+        const clause = bidOnAuction.value(behaviorBond).asClause(this.auctionID, blindedBid);
 
-        const clause = bidOnAuction.value(value).asClause(this.auctionID, blindedBid);
-
-        this.tx({
-          clause,
-          comment,
-          signer: window.signer,
-        });
+        this.tx({ clause, comment, signer: window.signer });
       },
     }
   }
@@ -249,8 +210,15 @@
     .input {
       margin-bottom: 20px;
     }
+
+    .error {
+      text-align: left;
+
+      small {
+        color: #E87D9B;
+        margin: 0;
+      }
+    }
+
   }
 </style>
-
-
-bid bid bid -> finalize bidding -> reveal bidding -> finalize auction

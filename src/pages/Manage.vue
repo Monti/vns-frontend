@@ -13,7 +13,7 @@
     </AppHero>
 
     <section>
-      <h3>Auctions</h3>
+      <h3>Current Auctions</h3>
       <div
         class="auctions"
         :key="auction[3]"
@@ -24,7 +24,7 @@
     </section>
 
     <section>
-      <h3>Domains</h3>
+      <h3>Your Domains</h3>
       <div v-for="domain in domains" :key="domain[0]" class="domains">
         <AppDomain :domain="domain" />
       </div>
@@ -110,8 +110,11 @@
         const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
         const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
 
-        return getDomain.call(1).then(({ decoded }) => {
-          return decoded;
+        return getDomain.call(id).then(({ decoded }) => {
+          return {
+            id,
+            ...decoded,
+          }
         });
 
         return getDomain.call(id);

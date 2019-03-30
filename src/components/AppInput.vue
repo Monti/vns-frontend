@@ -2,12 +2,15 @@
   <div class="input">
 
     <input
-      type="text"
       ref="input"
-      :placeholder="placeholder"
-      @input="onChange()"
+      :type="type"
       :value="value"
-      :class="{ withLabel: label }"
+      @input="onChange()"
+      :placeholder="placeholder"
+      :class="{
+        withLabel: label,
+        medium: size === 'medium'
+      }"
     />
 
     <div class="label" v-if="label">
@@ -20,12 +23,14 @@
 export default {
   name: 'AppInput',
   props: [
+    'size',
+    'type',
     'value',
     'label',
     'placeholder',
   ],
   methods: {
-    onChange(val) {
+    onChange() {
       this.$emit('input', this.$refs.input.value);
     }
   }
@@ -49,6 +54,11 @@ export default {
       &.withLabel {
         padding: 20px 100px 20px 20px;
       }
+
+      &.medium {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
     }
   }
 
@@ -61,11 +71,15 @@ export default {
     font-family: 'Roboto Mono';
     height: 100%;
     justify-content: center;
-    padding: 0 20px;
+    padding: 0 40px;
     position: absolute;
     right: 0;
     top: 0;
     z-index: -1;
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      padding: 0 20px;
+    }
   }
 
 </style>

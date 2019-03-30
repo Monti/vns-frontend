@@ -32,10 +32,13 @@
       </label>
 
       <AppInput
-        v-model="domain"
+        type="text"
         label=".vet"
+        v-model="domain"
         placeholder="search for your domain (press enter)"
       />
+
+      <AddressAvatar :signer="signer" :isX="isX" />
 
     </form>
 
@@ -69,6 +72,8 @@
   import Button from '@/components/Button';
   import AppHero from '@/components/AppHero';
   import AppInput from '@/components/AppInput'
+  import AvatarDoodle from '@/components/AvatarDoodle';
+  import AddressAvatar from '@/components/AddressAvatar';
   import DomainResults from '@/components/DomainResults';
   import AvailableDomain from '@/components/AvailableDomain';
   import UnavailableDomain from '@/components/UnavailableDomain';
@@ -79,6 +84,8 @@
       Button,
       AppHero,
       AppInput,
+      AvatarDoodle,
+      AddressAvatar,
       DomainResults,
       AvailableDomain,
       UnavailableDomain,
@@ -86,14 +93,40 @@
     mixins: [certify],
     data() {
       return {
+        isX: false,
         domain: '',
+        signer: null, 
         resolver: '',
         errors: false,
-        domainAvailable: null,
+        domainLength: null,
         submittedDomain: '',
+        domainAvailable: null,
+      }
+    },
+    mounted() {
+      const content = 'Confirm that you would like this site to access your account';
+
+      if (window.signer) {
+        this.signer = window.signer;
+        this.getX(window.signer);
+      } else {
+        this.certify(content).then(({ annex: { signer }}) => {
+          this.getX(signer);
+          this.signer = signer;
+          window.signer = signer;
+        });
       }
     },
     methods: {
+      getX(signer) {
+        const isXABI = find(this.$contract.abi, { name: 'isX' });
+        const isX = window.connex.thor.account(this.$address).method(isXABI);
+
+        isX.caller(signer).call().then(({ decoded }) => {
+          this.isX = decoded[0];
+          this.domainLength = decoded[0] ? 3 : 7;
+        });
+      },
       getDomain(domain) {
         const form = this.$refs.form;
         this.domain = domain;
@@ -101,24 +134,14 @@
         VueScrollTo.scrollTo(form, 500, { offset: -20 });
       },
       submit() {
-        if (this.domain.length < 7) {
+        if (this.domain.length < this.domainLength) {
           this.errors = true;
           return;
         } else {
           this.errors = false;
         }
 
-        const content = 'Confirm that you would like this site to access your account';
-
-        if (window.signer) {
-          this.resolveDomain();
-        } else {
-          this.certify(content).then(({ annex: { signer }}) => {
-            window.signer = signer;
-            this.resolveDomain();
-          });
-        }
-
+        this.resolveDomain();
       },
       resolveDomain() {
         const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
@@ -155,4 +178,5 @@
       top: -25px;
     }
   }
+
 </style>

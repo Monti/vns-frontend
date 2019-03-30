@@ -44,6 +44,11 @@
     max-width: 980px;
     margin: 0 auto;
     margin-bottom: 100px;
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      padding: 20px;
+      margin-bottom: 0;
+    }
   }
 
   .no-doodle-support css-doodle {

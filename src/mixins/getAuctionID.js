@@ -2,11 +2,11 @@ import { find } from 'lodash';
 
 const getAuctionID = {
   methods: {
-    getAuctionID() {
+    getAuctionID(domain) {
       const getAuctionIDABI = find(this.$contract.abi, { name: 'getAuctionID' });
       const getAuctionID = window.connex.thor.account(this.$address).method(getAuctionIDABI);
 
-      return getAuctionID.call(this.domain);
+      return getAuctionID.call(domain);
     },
   }
 };
