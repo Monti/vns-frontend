@@ -35,7 +35,7 @@
         type="text"
         label=".vet"
         v-model="domain"
-        placeholder="search for your domain (press enter)"
+        placeholder="search for a domain (press enter)"
       />
 
       <AddressAvatar :signer="signer" :isX="isX" />

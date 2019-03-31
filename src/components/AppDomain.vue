@@ -1,10 +1,5 @@
 <template>
-  <router-link class="link" tag="div" :to="{
-    name: 'manageDomain',
-    params: {
-      domain: domain.id
-    }}"
-  >
+  <router-link class="link" tag="div" :to="'/manage/' + domain.id">
     {{ domain[0] }}.vet
   </router-link>
 </template>

@@ -161,6 +161,10 @@ contract Registry is ERC721Full, Ownable {
         return _thorNodeContract.isX(msg.sender);
     }
 
+    function isOwner(uint256 _tokenID) public view returns(bool) {
+        return msg.sender == ownerOf(_tokenID);
+    }
+
     function setDomain(uint256 _tokenID, address _targetAddress) public {
         require (
             msg.sender == ownerOf(_tokenID),
