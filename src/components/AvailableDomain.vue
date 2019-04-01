@@ -57,17 +57,13 @@
 <script>
   import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
-  import { toWei, soliditySha3 } from 'web3-utils'; // UTF-8 is the default for ethereum related strings
-  import { AbiCoder } from 'web3-eth-abi'; // UTF-8 is the default for ethereum related strings
+  import { toWei, soliditySha3 } from 'web3-utils';
 
   import tx from '@/mixins/tx';
   import getAuctionID from '@/mixins/getAuctionID';
 
   import AppInput from '@/components/AppInput'
-  import Doodle from '@/components/Doodle';
   import Button from '@/components/Button';
-
-  import { Star } from '@/components/Icons';
 
   export default {
     name: "AvailableDomain",
@@ -76,8 +72,6 @@
     components: {
       AppInput,
       Button,
-      Doodle,
-      Star,
     },
     data() {
       return {
@@ -89,8 +83,6 @@
       }
     },
     mounted() {
-      const doodle = document.getElementById('doodle');
-
       this.getAuctionID(this.domain).then(({ decoded }) => {
         this.auctionID = decoded[0];
       });

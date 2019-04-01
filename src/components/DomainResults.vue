@@ -19,15 +19,10 @@
 </template>
 
 <script>
-  import _ from 'lodash';
-  import Button from '@/components/Button';
   import genericSuffixes from '@/helpers/generic-suffixes.json';
 
   export default {
     name: 'DomainResults',
-    components: {
-      Button,
-    },
     props: ['domain'],
     data() {
       return {

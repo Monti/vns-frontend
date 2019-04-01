@@ -40,7 +40,6 @@
 </template>
 
 <script>
-  import { picasso } from '@vechain/picasso';
   import { find } from 'lodash';
 
   import AppAuction from '@/components/AppAuction';
@@ -122,8 +121,6 @@
             ...decoded,
           }
         });
-
-        return getDomain.call(id);
       }
     },
     computed: {
