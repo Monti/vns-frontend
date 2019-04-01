@@ -118,7 +118,7 @@
 
 <script>
   import { find } from 'lodash';
-  import { toWei, fromWei, isAddress } from 'web3-utils';
+  import { fromWei, isAddress } from 'web3-utils';
   import moment from 'moment';
 
   import AddressAvatar from '@/components/AddressAvatar';

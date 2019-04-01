@@ -72,7 +72,6 @@
   import Button from '@/components/Button';
   import AppHero from '@/components/AppHero';
   import AppInput from '@/components/AppInput'
-  import AvatarDoodle from '@/components/AvatarDoodle';
   import AddressAvatar from '@/components/AddressAvatar';
   import DomainResults from '@/components/DomainResults';
   import AvailableDomain from '@/components/AvailableDomain';
@@ -84,7 +83,6 @@
       Button,
       AppHero,
       AppInput,
-      AvatarDoodle,
       AddressAvatar,
       DomainResults,
       AvailableDomain,

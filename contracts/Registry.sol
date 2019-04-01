@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity 0.5.2;
 
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Full.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
@@ -13,22 +13,23 @@ contract ThorNode {
 }
 
 contract Registry is ERC721Full, Ownable {
-    // using Counters for Counters.Counter;
     using StringLength for string;
     using SafeMath for uint256;
     
     constructor() ERC721Full("VeChain Name Service", "VNS") public {
         _tokenCount.increment();                                // Start counters at 1
         _auctionCount.increment();                              // Start counters at 1
-        _thorNodeContract = ThorNode(0xd4dac3a95c741773F093d59256A21ED6FCc768a7);    // Testnet Address
+        _thorNodeContract = ThorNode(0xb81E9C5f9644Dec9e5e3Cac86b4461A222072302);    // Testnet Address
+        _contractExpiry = now + 400 days;
     }
 
     // Collected fees stored in the contract's balance
     uint private _collectedFees;
-    uint private _costPerYear = 1 ether;
-    uint private _behaviourBond = 5 ether;
-    uint private _biddingTime = 3 minutes;
-    uint private _revealTime = 3 minutes;
+    uint private _contractExpiry;                               // Contract is expected to migrate to V2 long before this date
+    uint private _costPerYear = 1000 ether;
+    uint private _behaviourBond = 5000 ether;
+    uint private _biddingTime = 3 days;
+    uint private _revealTime = 1 days;
     uint private _regularLength = 7;
     uint private _xnodeLength = 4;
     ThorNode private _thorNodeContract;
@@ -72,11 +73,14 @@ contract Registry is ERC721Full, Ownable {
     // Mapping from address to refunds
     mapping(address => uint) private _refunds;
 
-    // Mapping from tokenIDs to purchase cost
-    mapping(uint256 => uint256) private _tokenToCost;
-
-    // Mapping from tokenIDs to purchase cost
+    // Mapping from user to their auctions
     mapping(address => uint256[]) private _userAuctions;
+    
+    // Mapping from domain to Subdomains
+    mapping(string => string[]) private _domainToSubDomains;
+    
+    // Mapping from subdomain to array position
+    mapping(string => uint256) private _subDomainToIndex;
 
 
     // Events
@@ -86,11 +90,34 @@ contract Registry is ERC721Full, Ownable {
         uint256 indexed _tokenID,
         uint256 _bond
     );
+    
+    event domainRemoved (
+        address indexed _owner,
+        string  indexed _domain,
+        uint256 indexed _tokenID
+    );
 
     event auctionStarted (
         uint256 indexed _auctionID,
         string  indexed _domain,
         uint256 _auctionEnd
+    );
+    
+    event newBidOnAuction (
+        uint256 indexed _auctionID,
+        address indexed _bidder
+    );
+
+    event biddingClosed (
+        uint256 indexed _auctionID,
+        string  indexed _domain
+    );
+    
+    event bidRevealed (
+        uint256 indexed _auctionID,
+        address indexed _bidder,
+        uint256 indexed _value,
+        bool _winning
     );
 
     event auctionEnded (
@@ -100,22 +127,42 @@ contract Registry is ERC721Full, Ownable {
         uint256 _winningBid
     );
 
-    event biddingClosed (
-        uint256 indexed _auctionID,
-        string  indexed _domain
-    );
-
     event domainAddressChanged (
         uint256 indexed _tokenID,
         string  indexed _domain,
         address indexed _targetAddress
     );
 
+    event subDomainAdded (
+        string  indexed _domain,
+        string  indexed _subDomain,
+        address indexed _targetAddress
+    );
 
+    event subDomainRemoved (
+        string  indexed _domain,
+        string  indexed _subDomain
+    );
+    
+    event subDomainAddressChanged(
+        string  indexed _domain,
+        string  indexed _subDomain,
+        address indexed _targetAddress
+    );
+    
+    event refundClaimed (
+        address indexed _claimant,
+        uint256 _value
+    );
+    
     // View Functions
-    // function getFeesEarned() external view returns (uint256 contractBalance, uint256 feesEarned) {
-    //     return (address(this).balance, _collectedFees);
-    // }
+    function isX() public view returns(bool) {
+        return _thorNodeContract.isX(msg.sender);
+    }
+
+    function isOwner(uint256 _tokenID) public view returns(bool) {
+        return msg.sender == ownerOf(_tokenID);
+    }
 
     // VIP-181 Functions
     function tokensOfOwner(address owner) external view returns (uint256[] memory) {
@@ -123,7 +170,9 @@ contract Registry is ERC721Full, Ownable {
     }
 
     // Domain
-    function getDomain(uint256 _tokenID) external view returns (string memory domainName, uint domainBond, uint yearlyCost, bool autoRenew, uint domainExpires) {
+    function getDomain(uint256 _tokenID) external view 
+    returns (string memory domainName, uint domainBond, uint yearlyCost, bool autoRenew, uint domainExpires) {
+        
         Domain memory d = _tokenToDomain[_tokenID];
 
         return (d.domainName, d.domainBond, d.yearlyCost, d.autoRenew, d.domainExpires);
@@ -133,9 +182,13 @@ contract Registry is ERC721Full, Ownable {
         return _domainToAddress[_domainName];
     }
 
+    function resolveSubDomain(string calldata _subDomainName) external view returns (address) {
+        return _subDomainToAddress[_subDomainName];
+    }
+
     // Auction
     function getAuction(uint256 _auctionID) external view 
-        returns (uint winningBid, address winningBidder, uint auctionEnd, string memory domainName, bool biddingEnded, uint revealEnd) {
+    returns (uint winningBid, address winningBidder, uint auctionEnd, string memory domainName, bool biddingEnded, uint revealEnd) {
         
         Auction memory a = _auctions[_auctionID];
 
@@ -156,15 +209,6 @@ contract Registry is ERC721Full, Ownable {
 
     // External Public Functions
     // Domain Functions
-
-    function isX() public view returns(bool) {
-        return _thorNodeContract.isX(msg.sender);
-    }
-
-    function isOwner(uint256 _tokenID) public view returns(bool) {
-        return msg.sender == ownerOf(_tokenID);
-    }
-
     function setDomain(uint256 _tokenID, address _targetAddress) public {
         require (
             msg.sender == ownerOf(_tokenID),
@@ -175,12 +219,29 @@ contract Registry is ERC721Full, Ownable {
         _domainToAddress[_domainName] = _targetAddress;
         emit domainAddressChanged(_tokenID, _domainName, _targetAddress);
     }
+    
+    function setSubDomain(uint256 _tokenID, string memory _subDomain, address _targetAddress) public {
+        require (
+            msg.sender == ownerOf(_tokenID),
+            "Only the owner of the domain can set its address"
+        );
+
+        string memory _domainName = _tokenToDomain[_tokenID].domainName;
+        _subDomainToAddress[string(abi.encodePacked(_subDomain, ".", _domainName))] = _targetAddress;
+        emit subDomainAddressChanged(_domainName, _subDomain, _targetAddress);
+    }
 
     function addSubdomain(uint256 _tokenID, string calldata _subDomain, address _targetAddress) external {
         _isApprovedOrOwner(msg.sender, _tokenID);
 
         string memory _domain = _tokenToDomain[_tokenID].domainName;
         _subDomainToAddress[string(abi.encodePacked(_subDomain, ".", _domain))] = _targetAddress;
+        
+        // Push domain to end of Domain to SubDomain array
+        _subDomainToIndex[string(abi.encodePacked(_subDomain, ".", _domain))] = _domainToSubDomains[_domain].length;
+        _domainToSubDomains[_domain].push(_subDomain);
+        
+        emit subDomainAdded(_domain, _subDomain, _targetAddress);
     }
 
     function removeSubdomain(uint256 _tokenID, string calldata _subDomain) external {
@@ -188,11 +249,29 @@ contract Registry is ERC721Full, Ownable {
 
         string memory _domain = _tokenToDomain[_tokenID].domainName;
         _subDomainToAddress[string(abi.encodePacked(_subDomain, ".", _domain))] = address(0);
+        
+        // Manage the domain to subdomain array
+        uint256 _lastIndex = _domainToSubDomains[_domain].length.sub(1);
+        uint256 _toDeleteIndex = _subDomainToIndex[string(abi.encodePacked(_subDomain, ".", _domain))];
+        string memory _lastIndexContent = _domainToSubDomains[_domain][_lastIndex];
+        
+        _domainToSubDomains[_domain][_toDeleteIndex] = _domainToSubDomains[_domain][_lastIndex];
+        _subDomainToIndex[string(abi.encodePacked(_lastIndexContent, ".", _domain))] = _toDeleteIndex;
+        
+        _domainToSubDomains[_domain].length--;
+        _subDomainToIndex[string(abi.encodePacked(_subDomain, ".", _domain))] = 0;
+        
+        emit subDomainRemoved(_domain, _subDomain);
     }
     
     function invalidateDomain(uint256 _tokenID) external {         
         Domain memory d = _tokenToDomain[_tokenID];                                 // Lets users delete domains that are > 6 chars
+        bytes memory dString = bytes(d.domainName);
 
+        require (
+            dString.length != 0,
+            "Domain must exist"
+        );
         if (_thorNodeContract.isX(ownerOf(_tokenID))) {
             require(
                 d.domainName.strlen() < _xnodeLength,
@@ -205,8 +284,10 @@ contract Registry is ERC721Full, Ownable {
             );
         }
 
-        _collectedFees += _tokenToDomain[_tokenID].domainBond;
+        uint256 _bounty = _tokenToDomain[_tokenID].domainBond / 10;
+        _collectedFees += _tokenToDomain[_tokenID].domainBond - _bounty;
         _burnDomain(_tokenID, d.domainName);                                        // Wipe domain data and delete the token
+        msg.sender.transfer(_bounty);
     }
 
     function popDomain(uint256 _tokenID) external {
@@ -217,11 +298,11 @@ contract Registry is ERC721Full, Ownable {
             "Can't pop domain before expiry"
         );
 
-        _refunds[ownerOf(_tokenID)] = _refunds[ownerOf(_tokenID)].add(d.domainBond);
+        _refunds[ownerOf(_tokenID)] += d.domainBond;
         _burnDomain(_tokenID, d.domainName);
     }
 
-    function collectDues(uint256 _tokenID) external payable {
+    function collectDues(uint256 _tokenID) external {
         Domain storage d = _tokenToDomain[_tokenID];
 
         require (
@@ -251,7 +332,7 @@ contract Registry is ERC721Full, Ownable {
             "Only the owner of a domain can deregister"
         );
 
-        _refunds[ownerOf(_tokenID)] = _refunds[ownerOf(_tokenID)].add(d.domainBond);
+        _refunds[ownerOf(_tokenID)] += d.domainBond;
         _burnDomain(_tokenID, d.domainName);
     }
 
@@ -263,7 +344,7 @@ contract Registry is ERC721Full, Ownable {
             "Payment must cover purchase"
         );
 
-        d.domainExpires.add(_years * 365);
+        d.domainExpires += (_years * 365);
         _collectedFees += msg.value;
     }
 
@@ -276,7 +357,7 @@ contract Registry is ERC721Full, Ownable {
         return _newAuction(_domain);
     }
 
-    function bidOnAuction(uint256 _auctionID, bytes32 _blindedBid) external payable {       // !!! CHECK IF THIS IS RE-ENTERABLE !!!
+    function bidOnAuction(uint256 _auctionID, bytes32 _blindedBid) external payable {
         Auction storage a = _auctions[_auctionID];
         
         require(
@@ -285,19 +366,21 @@ contract Registry is ERC721Full, Ownable {
         );
 
         require(
-            msg.value == _behaviourBond,                                        // Bond dissincentivises no-show bidding
+            msg.value == _behaviourBond,                                        // Need to attach _behaviourBond
             "Bidder must attach a good behaviour bond"
         );
 
-        _userAuctions[msg.sender].push(_auctionID);                             // Let the user find the a
+        _userAuctions[msg.sender].push(_auctionID);                             // Add auction to user's list
 
         if (a.blindedBid[msg.sender] == "") {                                   // If user doesn't already have a bid
             a.blindedBid[msg.sender] = _blindedBid;
             return;
         } else {
             a.blindedBid[msg.sender] = _blindedBid;
-            msg.sender.transfer(_behaviourBond);                                // Refund their 2nd behaviour bond !!! CHECK IF THIS IS RE-ENTERABLE !!!
+            msg.sender.transfer(_behaviourBond);
         }
+        
+        emit newBidOnAuction(_auctionID, msg.sender);
     }
 
     function finalizeBidding(uint256 _auctionID) external {
@@ -320,7 +403,6 @@ contract Registry is ERC721Full, Ownable {
             a.biddingEnded && now < a.revealEnd,
             "Cannot reveal before auction has ended, or after reveal period has ended"
         );
-
         require(
             a.blindedBid[msg.sender] == keccak256(abi.encodePacked(msg.value, _secret)),
             "Secret or attached value were incorrect"
@@ -329,15 +411,17 @@ contract Registry is ERC721Full, Ownable {
         if (msg.value <= a.winningBid) {
             delete(a.blindedBid[msg.sender]);
             msg.sender.transfer(msg.value + _behaviourBond);
+            emit bidRevealed(_auctionID, msg.sender, msg.value, false);
             return false;
         }
 
         if (a.winningBidder != address(0)) {
-            _refunds[a.winningBidder] = _refunds[a.winningBidder].add(a.winningBid + _behaviourBond);
+            _refunds[a.winningBidder] += a.winningBid + _behaviourBond;
         }
 
         a.winningBidder = msg.sender;
         a.winningBid = msg.value;
+        emit bidRevealed(_auctionID, msg.sender, msg.value, true);
         return true;
     }
 
@@ -360,6 +444,8 @@ contract Registry is ERC721Full, Ownable {
         uint256 _amountToRefund = _refunds[_claimant];
         _refunds[_claimant] = 0;                                            // Reset refundable amount before refunding
         _claimant.transfer(_amountToRefund);
+        
+        emit refundClaimed(msg.sender, _amountToRefund);
     }
 
     function claimFees(address payable _owner) external {
@@ -372,13 +458,27 @@ contract Registry is ERC721Full, Ownable {
         _collectedFees = 0;
         _owner.transfer(_receivable);
     }
+    
+    function recoverLostBids() external {
+        require(
+            msg.sender == owner() && now > _contractExpiry,
+            "Only owner can call after contract expiry"
+        );
+        
+        msg.sender.transfer(address(this).balance);
+    }
 
     // Private Functions
     function _registerDomain(string memory _domainName, address _owner, uint256 _pricePaid) internal {
         require(
-            verifyNewDomain(_domainName),
+            _verifyNewDomain(_domainName),
             "Domain is already registered"
         );          
+
+        if (_pricePaid < _costPerYear) {                                    // Prevent underflows and fail gracefully
+            _collectedFees += _pricePaid;
+            return;
+        }
 
         uint256 _tokenID = _tokenCount.current();                           // tokenID is equal to its count
         _mint(_owner, _tokenID);                                            // Call the mint function of ERC721Enumerable
@@ -395,7 +495,7 @@ contract Registry is ERC721Full, Ownable {
 
     function _newAuction(string memory _domain) internal returns (uint256) {
         require(
-            verifyNewDomain(_domain),
+            _verifyNewDomain(_domain),
             "Can't register an already existing domain"
         );
         require(
@@ -404,24 +504,29 @@ contract Registry is ERC721Full, Ownable {
         );
 
         uint _auctionID = _auctionCount.current();
+        _auctionCount.increment();
         uint _auctionEnd = now + _biddingTime;                              // Bidding lasts 3 days
+
         _auctions[_auctionID] = Auction(0, address(0), _auctionEnd, _domain, false, 0);   // Creates new auction struct in the auctions mapping
         _domainToAuction[_domain] = _auctionID;
 
-        _auctionCount.increment();
         emit auctionStarted(_auctionID, _domain, _auctionEnd);
         return _auctionID;
     }
 
     // Helper Functions
-    function verifyNewDomain(string memory _domainName) internal view returns (bool) {
+    function _verifyNewDomain(string memory _domainName) internal view returns (bool) {
         return _domainToAddress[_domainName] == address(0);
     }
 
     function _burnDomain(uint256 _tokenID, string memory _domainName) internal {
+        address _owner = ownerOf(_tokenID);
+        
         delete _tokenToDomain[_tokenID];
         delete _domainToAddress[_domainName];
         _burn(ownerOf(_tokenID), _tokenID);
+        
+        emit domainRemoved(_owner, _domainName, _tokenID);
     }
 
 }
