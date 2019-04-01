@@ -117,7 +117,7 @@
         const bidOnAuction = window.connex.thor.account(this.$address).method(bidOnAuctionABI);
 
         const comment = 'bid auction';
-        const behaviorBond = toWei('5', 'ether');
+        const behaviorBond = toWei('5000', 'ether');
 
         const userBid = toWei(this.bid, 'ether');
         const userSecret = soliditySha3(this.secret);
