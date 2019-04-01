@@ -25,7 +25,7 @@
         </div>
       </div>
       <div>
-        <div class="value">{{ domain[4] }}</div>
+        <div class="value">{{ domain[4] | moment }}</div>
         <div class="label">
           <small>Expiry Date</small>
         </div>
@@ -90,12 +90,36 @@
       </div>
     </form>
 
+    <form @submit.prevent="removeSubdomain" class="form">
+      <div class="form-title">
+        <h3>Remove Subdomain</h3>
+      </div>
+
+      <div class="">
+
+        <div class="input-group">
+          <AppInput
+            :label="'.' + domain[0] + '.vet'"
+            v-model="removedDomain"
+            placeholder="enter subdomain"
+          />
+        </div>
+
+      </div>
+
+      <div class="footer">
+        <Button class="button">Remove Subdomain</Button>
+      </div>
+    </form>
+
+
   </div>
 </template>
 
 <script>
   import { find } from 'lodash';
   import { toWei, fromWei, isAddress } from 'web3-utils';
+  import moment from 'moment';
 
   import AddressAvatar from '@/components/AddressAvatar';
   import Button from '@/components/Button';
@@ -121,6 +145,7 @@
         resolver: '',
         newDomain: '',
         subdomain: '',
+        removedDomain: '',
         targetAddress: '',
       }
     },
@@ -199,6 +224,10 @@
     filters: {
       fromWei(value) {
         return fromWei(value, 'ether');
+      },
+      moment(value) {
+        const date = value * 1000;
+        return moment(date).format('MMM DD YYYY')
       }
     }
   }

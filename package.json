@@ -12,6 +12,7 @@
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "css-doodle": "^0.6.0",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "truffle": "^5.0.8",
     "vue": "^2.6.6",
     "vue-router": "^3.0.2",
