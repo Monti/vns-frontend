@@ -11,13 +11,15 @@
         For more information visit our <a href="https://vechain-dns.gitbook.io/vns-docs/" target="_blank">Documentation</a>.
       </template>
       <template v-slot:extra>
-        <div class="manage">
+        <div class="actions">
           <router-link to="manage">
-            <Button
-              size="medium"
-              type="special"
-            >
+            <Button size="medium">
               Manage Domains
+            </Button>
+          </router-link>
+          <router-link to="send">
+            <Button size="medium">
+              Send using VNS
             </Button>
           </router-link>
         </div>
@@ -164,8 +166,13 @@
 </script>
 
 <style lang="scss" scoped>
-  .manage {
+  .actions {
+    display: flex;
     margin-top: 30px;
+
+    button {
+      margin-right: 30px;
+    }
   }
 
   form {
