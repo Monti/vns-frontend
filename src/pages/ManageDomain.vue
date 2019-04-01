@@ -127,8 +127,6 @@
 
   import tx from '@/mixins/tx';
 
-  const signingService = window.connex.vendor.sign('tx');
-
   export default {
     name: 'ManageDomain',
     mixins: [tx],
@@ -175,6 +173,8 @@
           return;
         }
 
+        const signingService = window.connex.vendor.sign('tx');
+
         const setDomainABI = find(this.$contract.abi, { name: 'setDomain' });
         const setDomain = window.connex.thor.account(this.$address).method(setDomainABI);
 
@@ -187,6 +187,7 @@
           .request([ clause ]);
       },
       addSubdomain() {
+        const signingService = window.connex.vendor.sign('tx');
         const addSubdomainABI = find(this.$contract.abi, { name: 'addSubdomain' });
         const addSubdomain = window.connex.thor.account(this.$address).method(addSubdomainABI);
 

@@ -1,8 +1,9 @@
-const signingService = window.connex.vendor.sign('tx');
 
 const tx = {
   methods: {
     tx({ comment, signer, clause }) {
+      const signingService = window.connex.vendor.sign('tx');
+
       return signingService
         .signer(signer)
         .link('https://connex.vecha.in/{txid')

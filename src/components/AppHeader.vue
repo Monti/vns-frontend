@@ -40,6 +40,10 @@
       }
     },
     async mounted() {
+      if (typeof window.connex == 'undefined') {
+        return;
+      }
+
       const block = await window.connex.thor.block(0).get();
       this.networkId = hexToBytes(block.id).pop();
     }
