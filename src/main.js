@@ -32,7 +32,7 @@ const router = new VueRouter({
   mode: 'history',
 });
 
-Vue.prototype.$address = '0xb9185eC4fA0fc213CD40c27Cb13f7D3A3a5C5ABf';
+Vue.prototype.$address = '0xa94eCb69c9303a5CF27D694602eCE285dBf72672';
 Vue.prototype.$contract = Registry;
 
 // console.log(Registry.bytecode)
