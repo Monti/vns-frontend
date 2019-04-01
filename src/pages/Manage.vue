@@ -80,7 +80,7 @@
         const getUserAuctionsABI = find(this.$contract.abi, { name: 'getUserAuctions' });
         const getUserAuctions = window.connex.thor.account(this.$address).method(getUserAuctionsABI);
 
-        getUserAuctions.call('0x0d0c5ffcf111b101b051d34636822b27eab7c115').then(({ decoded }) => {
+        getUserAuctions.call(window.signer).then(({ decoded }) => {
           const auctions = decoded[0].map(id => this.getAuction(id));
 
           Promise.all(auctions).then(data => {
@@ -103,7 +103,7 @@
         const tokensOfOwnerABI = find(this.$contract.abi, { name: 'tokensOfOwner' });
         const tokensOfOwner = window.connex.thor.account(this.$address).method(tokensOfOwnerABI);
 
-        tokensOfOwner.call('0x0d0c5ffcf111b101b051d34636822b27eab7c115').then(({ decoded }) => {
+        tokensOfOwner.call(window.signer).then(({ decoded }) => {
           const tokens = decoded[0].map(id => this.getDomain(id));
 
           Promise.all(tokens).then(data => {
