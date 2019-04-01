@@ -13,7 +13,14 @@
     </AppHero>
 
     <section>
-      <h3>Current Auctions</h3>
+
+      <div class="title">
+        <h3>Current Auctions</h3>
+        <div class="subtitle">
+          <small>After your auction has ended (each auction last 3 days) finalize your bid. Then reveal your bid. After that finilize the auction</small>
+        </div>
+      </div>
+
       <div class="auctions" :key="auction[3]" v-for="auction in auctionsWithValue">
         <AppAuction :auction="auction" />
       </div>
@@ -25,7 +32,13 @@
     </section>
 
     <section>
-      <h3>Your Domains</h3>
+      <div class="title">
+        <h3>Your Domains</h3>
+        <div class="subtitle">
+          <small>After you have successfully won an auction your domains will list here</small>
+        </div>
+      </div>
+
       <div class="domains" :key="domain[0]" v-for="domain in domains">
         <AppDomain :domain="domain" />
       </div>
@@ -174,4 +187,25 @@
   section {
     margin-bottom: 60px;
   }
+
+  .title {
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      text-align: left;
+    }
+
+  }
+
+  .subtitle {
+    margin-top: 10px;
+  }
+
+  .empty {
+    background-color: #fafafa;
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+
 </style>

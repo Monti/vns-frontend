@@ -7,8 +7,10 @@
       </div>
       <div class="actions">
         <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
-        <Button @onClick="finalizeAuction" size="medium">Finalize Auction</Button>
+        <small>then</small>
         <Button @onClick="revealBid" size="medium">Reveal Bid</Button>
+        <small>then</small>
+        <Button @onClick="finalizeAuction" size="medium">Finalize Auction</Button>
 
 
       </div>
@@ -126,8 +128,8 @@
     display: flex;
     justify-content: flex-end;
 
-    button:not(:first-of-type) {
-      margin-left: 20px;
+    small {
+      margin: 0 10px;
     }
   }
 
