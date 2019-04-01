@@ -14,19 +14,25 @@
 
     <section>
       <h3>Current Auctions</h3>
-      <div
-        class="auctions"
-        :key="auction[3]"
-        v-for="auction in auctionsWithValue"
-      >
+      <div class="auctions" :key="auction[3]" v-for="auction in auctionsWithValue">
         <AppAuction :auction="auction" />
+      </div>
+      <div v-if="auctions.length === 0">
+        <div class="empty">
+          You are not participating in any auctions!
+        </div>
       </div>
     </section>
 
     <section>
       <h3>Your Domains</h3>
-      <div v-for="domain in domains" :key="domain[0]" class="domains">
+      <div class="domains" :key="domain[0]" v-for="domain in domains">
         <AppDomain :domain="domain" />
+      </div>
+      <div v-if="domains.length === 0">
+        <div class="empty">
+          You have no domains!
+        </div>
       </div>
     </section>
 

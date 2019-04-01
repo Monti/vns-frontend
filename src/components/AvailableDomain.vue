@@ -9,7 +9,7 @@
       <section>
         <div class="info">
           <div class="price">
-            2000 VET
+            1000 VET
             <div>
               <small>+ gas fee</small>
             </div>

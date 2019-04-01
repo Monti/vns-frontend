@@ -11,7 +11,7 @@
       </div>
       <div class="actions">
         <div class="price">
-          <small>2000 VET</small>
+          <small>1000 VET</small>
         </div>
       </div>
     </div>

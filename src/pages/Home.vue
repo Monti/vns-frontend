@@ -8,6 +8,7 @@
       <template v-slot:description>
         The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain.
         VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
+        For more information visit our <a href="https://vechain-dns.gitbook.io/vns-docs/" target="_blank">Documentation</a>.
       </template>
       <template v-slot:extra>
         <div class="manage">
@@ -28,7 +29,7 @@
 
     <form @submit.prevent="submit" ref="form">
       <label v-if="errors">
-        <small>Domain has to be more then 7 characters</small>
+        <small>Domain has to be more then {{ domainLength }} characters</small>
       </label>
 
       <AppInput
@@ -37,6 +38,10 @@
         v-model="domain"
         placeholder="search for a domain (press enter)"
       />
+
+      <div v-if="!signer" class="tip">
+        <small>Upon searching for a domain VNS will request account access, this is to verify xnode status. Xnode holders are able to access shorter domains ;)</small> 
+      </div>
 
       <AddressAvatar :signer="signer" :isX="isX" />
 
@@ -96,26 +101,26 @@
         signer: null, 
         resolver: '',
         errors: false,
-        domainLength: null,
+        domainLength: 7,
         submittedDomain: '',
         domainAvailable: null,
       }
     },
-    mounted() {
-      const content = 'Confirm that you would like this site to access your account';
-
-      if (window.signer) {
-        this.signer = window.signer;
-        this.getX(window.signer);
-      } else {
-        this.certify(content).then(({ annex: { signer }}) => {
-          this.getX(signer);
-          this.signer = signer;
-          window.signer = signer;
-        });
-      }
-    },
     methods: {
+      confirm() {
+        const content = 'Confirm that you would like this site to access your account';
+
+        if (window.signer) {
+          this.signer = window.signer;
+          this.getX(window.signer);
+        } else {
+          this.certify(content).then(({ annex: { signer }}) => {
+            this.getX(signer);
+            this.signer = signer;
+            window.signer = signer;
+          });
+        }
+      },
       getX(signer) {
         const isXABI = find(this.$contract.abi, { name: 'isX' });
         const isX = window.connex.thor.account(this.$address).method(isXABI);
@@ -123,6 +128,7 @@
         isX.caller(signer).call().then(({ decoded }) => {
           this.isX = decoded[0];
           this.domainLength = decoded[0] ? 3 : 7;
+          this.resolveDomain();
         });
       },
       getDomain(domain) {
@@ -139,7 +145,7 @@
           this.errors = false;
         }
 
-        this.resolveDomain();
+        this.confirm();
       },
       resolveDomain() {
         const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
@@ -177,4 +183,9 @@
     }
   }
 
+  .tip {
+    width: 50%;
+    font-style: italic;
+    margin-top: 40px;
+  }
 </style>
