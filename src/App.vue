@@ -1,17 +1,20 @@
 <template>
-  <div id="app">
+  <div class="main-container">
     <AppHeader />
     <router-view></router-view>
+    <AppFooter />
   </div>
 </template>
 
 <script>
   import AppHeader from '@/components/AppHeader.vue'
+  import AppFooter from '@/components/AppFooter.vue'
 
   export default {
     name: 'app',
     components: {
       AppHeader,
+      AppFooter,
     }
   }
 </script>
@@ -58,5 +61,13 @@
   a {
     color: #0a0c27;
     text-decoration: none;
+  }
+
+  .main-container {
+    min-height: 100vh; /* will cover the 100% of viewport */
+    overflow: hidden;
+    display: block;
+    position: relative;
+    padding-bottom: 500px; /* height of your footer */
   }
 </style>

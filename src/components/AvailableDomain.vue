@@ -15,9 +15,14 @@
             </div>
           </div>
           <div class="actions">
-            <Button @onClick="startAuction">Start Auction</Button>
+            <Button @onClick="startAuction" :disabled="startAuctionSuccess || auctionAlreadyStarted">
+              <span v-if="loading">Loading</span>
+              <span v-else-if="startAuctionSuccess">Auction Started</span>
+              <span v-else-if="auctionAlreadyStarted">Auction Already Started</span>
+              <span v-else>Start Auction</span>
+            </Button>
             <small>then</small>
-            <Button @onClick="addBid">
+            <Button @onClick="addBid" :disabled="addBidDisabled || bid">
               Add A Bid
             </Button>
 
@@ -79,11 +84,20 @@
         error: null,
         secret: null,
         selected: true,
+        loading: false,
         auctionID: null,
+        addBidDisabled: true,
+        startAuctionSuccess: false,
+        auctionAlreadyStarted: false,
       }
     },
     mounted() {
       this.getAuctionID(this.domain).then(({ decoded }) => {
+        if (parseInt(decoded[0]) !== 0) {
+          this.auctionAlreadyStarted = true;
+          this.addBidDisabled = false;
+        }
+
         this.auctionID = decoded[0];
       });
     },
@@ -110,7 +124,10 @@
           .gas(1800000)
           .link('https://connex.vecha.in/{txid')
           .comment(comment)
-          .request([ clause ]);
+          .request([ clause ])
+          .then(({ txid }) => {
+            this.getReceipt({ txid });
+          });
       },
       bidOnAuction() {
         if (this.secret === null) {
@@ -139,6 +156,27 @@
           .comment(comment)
           .request([ clause ]);
       },
+      getReceipt({ txid }) {
+        this.loading = true;
+
+        this.receiptPoll = setInterval(async () => {
+          try {
+            const tx = window.connex.thor.transaction(txid).getReceipt;
+            if (tx) {
+              this.loading = false;
+
+              if (!tx.reverted) {
+                this.addBidDisabled = false;
+                this.startAuctionSuccess = true;
+              }
+
+              clearInterval(this.receiptPoll);
+            }
+          } catch(error) {
+            console.log(error);
+          }
+        }, 1000);
+      }
     }
   }
 </script>
