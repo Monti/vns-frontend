@@ -26,6 +26,7 @@
 
       <div class="input-group">
         <AppInput
+          type="number"
           v-model="amount"
           placeholder="enter amount to send"
         />
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+import { find } from 'lodash';
 import AppInput from '@/components/AppInput'
 import AppHero from '@/components/AppHero'
 import Button from '@/components/Button'
@@ -54,22 +56,17 @@ export default {
   data() {
     return {
       domain: '',
-      value: null,
       amount: null,
       resolver: '',
     }
   },
   methods: {
-    resolveDomain() {
+    submit() {
+      const signingService = window.connex.vendor.sign('tx');
       const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
       const resolveDomain = window.connex.thor.account(this.$address).method(resolveDomainABI);
 
-      return resolveDomain.call(this.domain);
-    },
-    submit() {
-      const signingService = window.connex.vendor.sign('tx');
-
-      this.resolveDomain().then(({ decoded }) => {
+      resolveDomain.call(this.domain).then(({ decoded }) => {
         this.resolver = decoded['0'];
         const domainAvailable = /^0x0+$/.test(this.resolver);
 
@@ -80,7 +77,7 @@ export default {
             .request([
               {
                 to: this.resolver,
-                value: this.value,
+                value: this.amount,
               }
             ]).then(result => {
               console.log(result);
