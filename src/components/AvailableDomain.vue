@@ -98,13 +98,19 @@
         this.bid = true;
       },
       startAuction() {
+        const signingService = window.connex.vendor.sign('tx');
         const startAuctionABI = find(this.$contract.abi, { name: 'startAuction' });
         const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
 
         const comment = 'start auction';
         const clause = startAuction.asClause(this.domain);
 
-        this.tx({ clause, comment, signer: window.signer, });
+        signingService
+          .signer(window.signer)
+          .gas(1800000)
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
       },
       bidOnAuction() {
         if (this.secret === null) {
@@ -113,6 +119,7 @@
           return;
         }
 
+        const signingService = window.connex.vendor.sign('tx');
         const bidOnAuctionABI = find(this.$contract.abi, { name: 'bidOnAuction' });
         const bidOnAuction = window.connex.thor.account(this.$address).method(bidOnAuctionABI);
 
@@ -125,7 +132,12 @@
         
         const clause = bidOnAuction.value(behaviorBond).asClause(this.auctionID, blindedBid);
 
-        this.tx({ clause, comment, signer: window.signer });
+        signingService
+          .signer(window.signer)
+          .gas(150000)
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
       },
     }
   }

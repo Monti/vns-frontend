@@ -80,35 +80,53 @@
         this.reveal = true;
       },
       submit() {
+        const signingService = window.connex.vendor.sign('tx');
         const revealBidABI = find(this.$contract.abi, { name: 'revealBid' });
         const revealBid = window.connex.thor.account(this.$address).method(revealBidABI);
 
-        const comment = 'reveal';
+        const comment = 'reveal bid';
 
         const userBid = toWei(this.bid, 'ether');
         const secret = soliditySha3(this.secret);
 
         const clause = revealBid.value(userBid).asClause(this.auctionID, secret);
 
-        this.tx({ clause, comment, signer: window.signer });
+        signingService
+          .signer(window.signer)
+          .gas(116000)
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
       },
       finalizeBidding() {
+        const signingService = window.connex.vendor.sign('tx');
         const finalizeBiddingABI = find(this.$contract.abi, { name: 'finalizeBidding' });
         const finalizeBidding = window.connex.thor.account(this.$address).method(finalizeBiddingABI);
 
-        const comment = 'end auction';
+        const comment = 'finalize bidding';
         const clause = finalizeBidding.asClause(1)
 
-        this.tx({ clause, comment, signer: window.signer });
+        signingService
+          .signer(window.signer)
+          .gas(111000)
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
       },
       finalizeAuction() {
+        const signingService = window.connex.vendor.sign('tx');
         const finalizeAuctionABI = find(this.$contract.abi, { name: 'finalizeAuction' });
         const finalizeAuction = window.connex.thor.account(this.$address).method(finalizeAuctionABI);
 
         const comment = 'finalize auction';
         const clause = finalizeAuction.asClause(this.auctionID)
 
-        this.tx({ clause, comment, signer: window.signer });
+        signingService
+          .signer(window.signer)
+          .gas(593051)
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
       },
     }
   }
