@@ -3,7 +3,7 @@
     <div class="auction-wrapper">
       <div>
         <div class="domain">{{ auction[3] }}.vet</div>
-        <small>auction end: {{ auction[2] }}</small>
+        <small>auction end: {{ auction[2] | moment }}</small>
       </div>
       <div class="actions">
         <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
@@ -46,6 +46,7 @@
 
 <script>
   import { find } from 'lodash';
+  import moment from 'moment';
   import { toWei, soliditySha3 } from 'web3-utils';
 
   import tx from '@/mixins/tx';
@@ -128,6 +129,11 @@
           .comment(comment)
           .request([ clause ]);
       },
+    },
+    filters: {
+      moment(value) {
+        return moment(value * 1000).format("MM/DD/YYYY hh:mma");
+      }
     }
   }
 </script>
