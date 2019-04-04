@@ -13,12 +13,12 @@
       <template v-slot:extra>
         <div class="actions">
           <router-link to="manage">
-            <Button size="small">
+            <Button size="medium">
               Manage Domains
             </Button>
           </router-link>
           <router-link to="send">
-            <Button size="small">
+            <Button size="medium">
               Send using VNS
             </Button>
           </router-link>
