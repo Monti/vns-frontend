@@ -13,12 +13,12 @@
       <template v-slot:extra>
         <div class="actions">
           <router-link to="manage">
-            <Button size="medium">
+            <Button size="small">
               Manage Domains
             </Button>
           </router-link>
           <router-link to="send">
-            <Button size="medium">
+            <Button size="small">
               Send using VNS
             </Button>
           </router-link>
@@ -29,41 +29,47 @@
       </template>
     </AppHero>
 
-    <form @submit.prevent="submit" ref="form">
-      <label v-if="errors">
-        <small>Domain has to be more then {{ domainLength }} characters</small>
-      </label>
+    <div class="main">
 
-      <AppInput
-        type="text"
-        label=".vet"
-        v-model="domain"
-        placeholder="search for a domain (press enter)"
-      />
+      <form @submit.prevent="submit" ref="form">
+        <label v-if="errors && !isX" class="error">
+          <small>If not an X Node Holder your domain has to be more then {{ domainLength }} characters</small>
+        </label>
 
-      <div v-if="!signer" class="tip">
-        <small>Upon searching for a domain VNS will request account access, this is to verify xnode status. Xnode holders are able to access shorter domains ;)</small> 
+        <label v-if="isX">
+          <small>You now have access for shorter domains!</small>
+        </label>
+
+        <AppInput
+          :isX="isX"
+          type="text"
+          label=".vet"
+          v-model="domain"
+          labelStyle="transparent"
+          placeholder="search for a domain"
+        />
+      </form>
+
+      <span>or</span>
+
+      <div class="unlock-rewards">
+        <Button size="small" @onClick="unlock">Unlock X Node Rewards</Button>
       </div>
 
-      <AddressAvatar :signer="signer" :isX="isX" />
+    </div>
 
-    </form>
+    <AddressAvatar :signer="signer" :isX="isX" />
 
     <div v-if="domainAvailable === true && submittedDomain.length > 0">
       <AvailableDomain :domain="submittedDomain" />
     </div>
 
     <div v-else-if="domainAvailable === false">
-      <UnavailableDomain
-        :domain="submittedDomain"
-        :resolver="resolver"
-      />
+      <UnavailableDomain :domain="submittedDomain" :resolver="resolver" />
 
       <h3>Here are some examples of other domains</h3>
 
-      <DomainResults
-        :domain="submittedDomain"
-        @clicked="getDomain"
+      <DomainResults :domain="submittedDomain" @clicked="getDomain"
       />
 
     </div>
@@ -109,7 +115,7 @@
       }
     },
     methods: {
-      confirm() {
+      unlock() {
         const content = 'Confirm that you would like this site to access your account';
 
         if (window.signer) {
@@ -129,8 +135,7 @@
 
         isX.caller(signer).call().then(({ decoded }) => {
           this.isX = decoded[0];
-          this.domainLength = decoded[0] ? 3 : 7;
-          this.resolveDomain();
+          this.domainLength = decoded[0] ? 4 : 7;
         });
       },
       getDomain(domain) {
@@ -147,7 +152,7 @@
           this.errors = false;
         }
 
-        this.confirm();
+        this.resolveDomain();
       },
       resolveDomain() {
         const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
@@ -177,17 +182,20 @@
 
   form {
     text-align: left;
-    margin: 50px 0;
     position: relative;
 
     label {
-      color: #FF5A70;
       display: block;
       left: 0;
       margin-bottom: 5px;
       position: absolute;
       top: -25px;
     }
+
+  }
+
+  .error {
+    color: #FF5A70;
   }
 
   .tip {
@@ -195,4 +203,37 @@
     font-style: italic;
     margin-top: 40px;
   }
+
+  .title {
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      text-align: left;
+    }
+  }
+
+  .subtitle {
+    margin-top: 10px;
+  }
+
+  .unlock-rewards {
+    display: flex;
+  }
+
+  .main {
+    display: flex;
+    margin-top: 50px;
+
+    form {
+      flex: 1;
+    }
+
+    span {
+      align-items: center;
+      display: flex;
+      margin: 0 20px;;
+    }
+  }
+
 </style>

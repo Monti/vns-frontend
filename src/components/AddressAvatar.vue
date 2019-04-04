@@ -2,7 +2,6 @@
   <div>
     <div v-if="signer" class="user">
       <small v-if="text" class="intro">{{ text }}</small>
-      <small v-if="isX" class="intro">Welcome x node holder</small>
       <div class="address">
         <AvatarDoodle />
         <div class="signer">

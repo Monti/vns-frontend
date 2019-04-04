@@ -195,7 +195,6 @@
       margin: 0;
       text-align: left;
     }
-
   }
 
   .subtitle {

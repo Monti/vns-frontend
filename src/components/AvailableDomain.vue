@@ -65,15 +65,18 @@
   import { toWei, soliditySha3 } from 'web3-utils';
 
   import tx from '@/mixins/tx';
+  import certify from '@/mixins/certify';
   import getAuctionID from '@/mixins/getAuctionID';
 
   import AppInput from '@/components/AppInput'
   import Button from '@/components/Button';
 
+  const content = 'Confirm that you would like this site to access your account';
+
   export default {
     name: "AvailableDomain",
     props: ['domain'],
-    mixins: [tx, getAuctionID],
+    mixins: [tx, getAuctionID, certify],
     components: {
       AppInput,
       Button,
@@ -91,19 +94,32 @@
         auctionAlreadyStarted: false,
       }
     },
-    mounted() {
-      this.getAuctionID(this.domain).then(({ decoded }) => {
-        if (parseInt(decoded[0]) !== 0) {
-          this.auctionAlreadyStarted = true;
-          this.addBidDisabled = false;
+    watch: {
+      domain(newDomain, oldDomain) {
+        if (newDomain !== oldDomain) {
+          this.init();
         }
-
-        this.auctionID = decoded[0];
-      });
+      }
+    },
+    mounted() {
+      this.init();
     },
     methods: {
       submit() {
         this.bidOnAuction();
+      },
+      init() {
+        this.getAuctionID(this.domain).then(({ decoded }) => {
+          if (parseInt(decoded[0]) !== 0) {
+            this.auctionAlreadyStarted = true;
+            this.addBidDisabled = false;
+          } else {
+            this.auctionAlreadyStarted = false;
+            this.addBidDisabled = true;
+          }
+
+          this.auctionID = decoded[0];
+        });
       },
       avatar() {
         return picasso('0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed');
@@ -111,7 +127,12 @@
       addBid() {
         this.bid = true;
       },
-      startAuction() {
+      async startAuction() {
+        if (!window.signer) {
+          const signer = await this.certify(content).then(({ annex: { signer }}) => signer);
+          window.signer = signer;
+        }
+
         const signingService = window.connex.vendor.sign('tx');
         const startAuctionABI = find(this.$contract.abi, { name: 'startAuction' });
         const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
@@ -129,11 +150,16 @@
             this.getReceipt({ txid });
           });
       },
-      bidOnAuction() {
+      async bidOnAuction() {
         if (this.secret === null) {
           this.error = true;
 
           return;
+        }
+
+        if (!window.signer) {
+          const signer = await this.certify(content).then(({ annex: { signer }}) => signer);
+          window.signer = signer;
         }
 
         const signingService = window.connex.vendor.sign('tx');
@@ -196,6 +222,7 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
+    margin: 50px 0;
 
     h3 {
       font-size: 3rem;

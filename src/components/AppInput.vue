@@ -1,5 +1,5 @@
 <template>
-  <div class="input">
+  <div class="input" :class="{ isX }">
 
     <input
       ref="input"
@@ -13,7 +13,13 @@
       }"
     />
 
-    <div class="label" v-if="label">
+    <div
+      v-if="label"
+      class="label"
+      :class="{
+        transparent: labelStyle === 'transparent'
+      }"
+    >
       {{ label }}
     </div>
   </div>
@@ -23,10 +29,12 @@
 export default {
   name: 'AppInput',
   props: [
+    'isX',
     'size',
     'type',
     'value',
     'label',
+    'labelStyle',
     'placeholder',
   ],
   methods: {
@@ -80,6 +88,13 @@ export default {
     @media (min-width: 320px) and (max-width: 480px) {
       padding: 0 20px;
     }
+
+  }
+
+  .transparent {
+    border-left: 2px solid #0a0c27;
+    background-color: transparent;
+    color: #0a0c27;
   }
 
 </style>
