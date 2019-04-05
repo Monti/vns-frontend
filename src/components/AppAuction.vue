@@ -3,7 +3,8 @@
     <div class="auction-wrapper">
       <div>
         <div class="domain">{{ auction[3] }}.vet</div>
-        <small>auction end: {{ auction[2] | moment }}</small>
+        <small v-if="!auctionEnded">auction end: {{ auction[2] | moment }}</small>
+        <small v-else>auction ended at {{ auction[2] | moment }}</small>
       </div>
       <div class="actions">
         <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
@@ -73,6 +74,12 @@
       this.getAuctionID(this.auction[3]).then(({ decoded }) => {
         this.auctionID = decoded[0];
       });
+    },
+    computed: {
+      auctionEnded() {
+        const now = Math.floor((new Date()).getTime() / 1000);
+        return this.auction[2] < now;
+      }
     },
     methods: {
       revealBid() {
