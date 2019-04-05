@@ -11,8 +11,6 @@
         <Button @onClick="revealBid" size="medium">Reveal Bid</Button>
         <small>then</small>
         <Button @onClick="finalizeAuction" size="medium">Finalize Auction</Button>
-
-
       </div>
     </div>
     <div v-if="reveal" class="addBid">
@@ -105,7 +103,7 @@
         const finalizeBidding = window.connex.thor.account(this.$address).method(finalizeBiddingABI);
 
         const comment = 'finalize bidding';
-        const clause = finalizeBidding.asClause(1)
+        const clause = finalizeBidding.asClause(this.auctionID);
 
         signingService
           .signer(window.signer)
