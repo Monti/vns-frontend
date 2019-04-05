@@ -17,7 +17,7 @@
       <div class="title">
         <h3>Current Auctions</h3>
         <div class="subtitle">
-          <small>After your auction has ended (each auction last 3 days) finalize your bid. Then reveal your bid. After that finilize the auction</small>
+          <small>After each 3 day auction, finalize your bid. After finalizing, you have 24 hours to reveal your bid and complete the auction.</small>
         </div>
       </div>
 

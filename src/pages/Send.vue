@@ -9,7 +9,7 @@
         Manage your auctions and domains. You can add and remove subdomains here as well as check the status of your domain.
       </template>
       <template v-slot:image>
-        <img src="@/assets/manage.jpg" />
+        <img src="@/assets/send.jpg" />
       </template>
     </AppHero>
 

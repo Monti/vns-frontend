@@ -137,7 +137,7 @@
         const startAuctionABI = find(this.$contract.abi, { name: 'startAuction' });
         const startAuction = window.connex.thor.account(this.$address).method(startAuctionABI);
 
-        const comment = 'start auction';
+        const comment = `start auction for ${this.domain}.vet`;
         const clause = startAuction.asClause(this.domain);
 
         signingService
@@ -166,7 +166,7 @@
         const bidOnAuctionABI = find(this.$contract.abi, { name: 'bidOnAuction' });
         const bidOnAuction = window.connex.thor.account(this.$address).method(bidOnAuctionABI);
 
-        const comment = 'bid auction';
+        const comment = `bid for ${this.domain}.vet`;
         const behaviorBond = toWei('5000', 'ether');
 
         const userBid = toWei(this.bid, 'ether');

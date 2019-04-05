@@ -10,7 +10,7 @@
         <small>then</small>
         <Button @onClick="revealBid" size="medium">Reveal Bid</Button>
         <small>then</small>
-        <Button @onClick="finalizeAuction" size="medium">Finalize Auction</Button>
+        <Button @onClick="finalizeAuction" size="medium">Complete Auction</Button>
       </div>
     </div>
     <div v-if="reveal" class="addBid">
