@@ -42,6 +42,8 @@
 
 <script>
 import { find } from 'lodash';
+import { toWei } from 'web3-utils';
+
 import AppInput from '@/components/AppInput'
 import AppHero from '@/components/AppHero'
 import Button from '@/components/Button'
@@ -68,7 +70,7 @@ export default {
 
       resolveDomain.call(this.domain).then(({ decoded }) => {
         this.resolver = decoded['0'];
-        const domainAvailable = /^0x0+$/.test(this.resolver);
+        const domainAvailable = !/^0x0+$/.test(this.resolver);
 
         if (domainAvailable) {
           signingService
@@ -77,7 +79,7 @@ export default {
             .request([
               {
                 to: this.resolver,
-                value: this.amount,
+                value: toWei(this.amount, 'ether'),
               }
             ]).then(result => {
               console.log(result);
