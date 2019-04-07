@@ -1,29 +1,11 @@
-# vns
+# VeChain Name Servic
 
-## Project setup
-```
-npm install
-```
+This app allows you to register and manage a .vet domain, for use in VeChain decentralized applications and compatible blockchain browsers.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Documentation
 
-### Compiles and minifies for production
-```
-npm run build
-```
+You can find documentation on how the VeChain Name Service works on [Gitbook](https://vechain-dns.gitbook.io/vns-docs).
 
-### Run your tests
-```
-npm run test
-```
+## How to integrate with your dApp
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Currently you can integrate VNS into your dApp using our JavaScript interface [VNS-Js](https://github.com/Monti/vns-js).

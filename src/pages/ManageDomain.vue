@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <h2>{{ domain[0] }}.vet</h2>
+
     <AddressAvatar :signer="resolver" text="Resolver:" />
 
     <div class="info" v-if="domain[0]">
@@ -16,14 +17,14 @@
           <small>Yearly Cost</small>
         </div>
       </div>
-      <div>
+      <button class="tile" @onClick="enableAutoRewnew">
         <div class="value" v-if="domain[3]">On</div>
         <div class="value" v-else>Off</div>
 
         <div class="label">
           <small>Auto Renew</small>
         </div>
-      </div>
+      </button>
       <div>
         <div class="value">{{ domain[4] | moment }}</div>
         <div class="label">
@@ -156,6 +157,19 @@
       });
     },
     methods: {
+      enableAutoRewnew() {
+        const signingService = window.connex.vendor.sign('tx');
+        const enableAutoRewnewABI = find(this.$contract.abi, { name: 'enableAutoRewnew' });
+        const enableAutoRewnew = window.connex.thor.account(this.$address).method(enableAutoRewnewABI);
+
+        const comment = 'Enable Auto Renew';
+        const clause = enableAutoRewnew.asClause(this.id);
+
+        signingService
+          .link('https://connex.vecha.in/{txid')
+          .comment(comment)
+          .request([ clause ]);
+      },
       getDomain() {
         const getDomainABI = find(this.$contract.abi, { name: 'getDomain' });
         const getDomain = window.connex.thor.account(this.$address).method(getDomainABI);
@@ -209,9 +223,6 @@
 
       },
       withdrawEarly() {
-      },
-      enableAutoRewnew() {
-
       },
       resolveDomain() {
         const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
@@ -295,7 +306,8 @@
     margin-top: 50px;
     display: flex;
 
-    > div {
+    > div,
+    .tile {
       background-color: #fafafa;
       border-radius: 3px;
       flex: 1;
@@ -303,7 +315,19 @@
       text-align: center;
       padding: 32px 0;
     }
+
+    .tile {
+      border: none;
+      cursor: pointer;
+      font-size: initial;
+
+      &:hover {
+        background-color: #FFAA6E;
+        color: #ffffff;
+      }
+    }
   }
+
 
   .value {
     font-family: 'Rubik', sans-serif;
