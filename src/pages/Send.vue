@@ -6,7 +6,7 @@
         Send Your VIP-180 Tokens to a VNS Address
       </template>
       <template v-slot:description>
-        Manage your auctions and domains. You can add and remove subdomains here as well as check the status of your domain.
+        With the help of our JavaScript plugin <a href="https://github.com/Monti/vns-js" target="_blank">VNS-Js</a> you can send VET to any VNS registered domain.
       </template>
       <template v-slot:image>
         <img src="@/assets/send.jpg" />
@@ -41,12 +41,14 @@
 </template>
 
 <script>
-import { find } from 'lodash';
 import { toWei } from 'web3-utils';
+import VNS from 'vns-js';
 
 import AppInput from '@/components/AppInput'
 import AppHero from '@/components/AppHero'
 import Button from '@/components/Button'
+
+const vns = new VNS(window.connex);
 
 export default {
   name: 'Send',
@@ -65,12 +67,9 @@ export default {
   methods: {
     submit() {
       const signingService = window.connex.vendor.sign('tx');
-      const resolveDomainABI = find(this.$contract.abi, { name: 'resolveDomain' });
-      const resolveDomain = window.connex.thor.account(this.$address).method(resolveDomainABI);
 
-      resolveDomain.call(this.domain).then(({ decoded }) => {
-        this.resolver = decoded['0'];
-        const domainAvailable = !/^0x0+$/.test(this.resolver);
+      vns.lookup(this.domain).then(address => {
+        const domainAvailable = !/^0x0+$/.test(address);
 
         if (domainAvailable) {
           signingService
