@@ -3,8 +3,21 @@
     <div class="auction-wrapper">
       <div>
         <div class="domain">{{ auction[3] }}.vet</div>
-        <small v-if="!auctionEnded">auction end: {{ auction[2] | moment }}</small>
-        <small v-else>auction ended at {{ auction[2] | moment }}</small>
+        <div class="detail">
+          <small v-if="!auctionEnded">auction end: {{ auction[2] | moment }}</small>
+          <small v-if="auctionEnded">auction ended at {{ auction[2] | moment }}</small>
+        </div>
+        <div class="detail">
+          <small v-if="auction[4]">bidding has ended</small>
+          <small v-else>bidding has not ended</small>
+        </div>
+        <div class="detail">
+          <small v-if="revealStarted">reveal ended at {{ auction[5] | moment }}</small>
+          <small v-else>reveal period has not started</small>
+        </div>
+        <div class="detail" v-if="revealStarted && revealStarted">
+          <small>reveal has ended <br />you can complete the auction!</small>
+        </div>
       </div>
       <div class="actions">
         <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
@@ -79,6 +92,13 @@
       auctionEnded() {
         const now = Math.floor((new Date()).getTime() / 1000);
         return this.auction[2] < now;
+      },
+      revealStarted() {
+        return parseInt(this.auction[5]) !== 0;
+      },
+      revealEnded() {
+        const now = Math.floor((new Date()).getTime() / 1000);
+        return this.auction[5] < now;
       }
     },
     methods: {
@@ -145,7 +165,9 @@
 
 <style lang="scss" scoped>
   .domain {
+    font-size: 1.2rem;
     font-weight: bold;
+    padding: 10px 0;
   }
 
   .auction-wrapper {
@@ -171,6 +193,11 @@
     width: 100%;
   }
 
+  .detail {
+    border-top: 2px dashed #ccc;
+    padding: 10px 0;
+  }
+
   .addBid {
     display: flex;
     text-align: right;
@@ -191,6 +218,5 @@
         margin: 0;
       }
     }
-
   }
 </style>

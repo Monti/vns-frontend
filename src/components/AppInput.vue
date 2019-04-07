@@ -2,6 +2,7 @@
   <div class="input" :class="{ isX }">
 
     <input
+      :min="min"
       ref="input"
       :type="type"
       :value="value"
@@ -30,6 +31,7 @@ export default {
   name: 'AppInput',
   props: [
     'isX',
+    'min',
     'size',
     'type',
     'value',
@@ -39,7 +41,9 @@ export default {
   ],
   methods: {
     onChange() {
-      this.$emit('input', this.$refs.input.value);
+      if (this.$refs.input.value.length > 0) {
+        this.$emit('input', this.$refs.input.value);
+      }
     }
   }
 }

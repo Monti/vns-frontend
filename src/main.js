@@ -13,6 +13,10 @@ import Home from '@/pages/Home.vue';
 import Manage from '@/pages/Manage.vue';
 import ManageDomain from '@/pages/ManageDomain.vue';
 
+import getNetworkMixin from '@/mixins/getNetwork';
+
+const { getNetwork } = getNetworkMixin.methods;
+
 Vue.config.productionTip = false;
 Vue.use(VueRouter, VueScrollTo);
 
@@ -32,10 +36,19 @@ const router = new VueRouter({
   mode: 'history',
 });
 
-Vue.prototype.$address = '0xa94eCb69c9303a5CF27D694602eCE285dBf72672';
+getNetwork().then(networkId => {
+  if (networkId === 74) {
+    // mainnet
+    Vue.prototype.$address = '0xa94eCb69c9303a5CF27D694602eCE285dBf72672';
+  } else if (networkId === 39) {
+    // testnet
+    Vue.prototype.$address = '0xE16d21d50b032eeA28dE721a695Eef67b0B20bfd';
+  }
+});
+
 Vue.prototype.$contract = Registry;
 
-// console.log(Registry.bytecode)
+// console.log(JSON.stringify(Registry.bytecode))
 
 
 WebFont.load({

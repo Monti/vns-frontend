@@ -44,8 +44,9 @@
                 <AppInput
                   type="number"
                   size="medium"
+                  min="1000"
                   v-model="bid"
-                  placeholder="type your bid"
+                  placeholder="type your bid (minimum 1000 VET)"
                 />
 
                 <Button>Add Bid</Button>

@@ -25,11 +25,12 @@
 </template>
 
 <script>
-  import { hexToBytes } from 'web3-utils';
   import Doodle from '@/components/Doodle';
+  import getNetwork from '@/mixins/getNetwork';
 
   export default {
     name: 'AppHeader',
+    mixins: [getNetwork],
     components: {
       Doodle
     },
@@ -44,8 +45,7 @@
         return;
       }
 
-      const block = await window.connex.thor.block(0).get();
-      this.networkId = hexToBytes(block.id).pop();
+      this.networkId = await this.getNetwork();
     }
   }
 </script>
