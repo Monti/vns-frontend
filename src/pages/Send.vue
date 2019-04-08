@@ -79,9 +79,7 @@ export default {
                 to: address,
                 value: toWei(this.amount, 'ether'),
               }
-            ]).then(result => {
-              console.log(result);
-            });
+            ]);
         }
       });
     }
