@@ -193,6 +193,7 @@
               this.loading = false;
 
               if (!tx.reverted) {
+                window.location.reload(false); 
                 this.addBidDisabled = false;
                 this.startAuctionSuccess = true;
               }
