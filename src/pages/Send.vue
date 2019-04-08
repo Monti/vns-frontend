@@ -61,7 +61,6 @@ export default {
     return {
       domain: '',
       amount: null,
-      resolver: '',
     }
   },
   methods: {
@@ -77,7 +76,7 @@ export default {
             .comment('Send VET to address using VeChain Name Service')
             .request([
               {
-                to: this.resolver,
+                to: address,
                 value: toWei(this.amount, 'ether'),
               }
             ]).then(result => {
