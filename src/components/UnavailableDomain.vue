@@ -16,9 +16,6 @@
 </template>
 
 <script>
-  import { picasso } from '@vechain/picasso';
-  import _ from 'lodash';
-
   export default {
     name: 'UnavailableDomain',
     props: ['domain', 'resolver'],

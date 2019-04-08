@@ -201,7 +201,7 @@
               clearInterval(this.receiptPoll);
             }
           } catch(error) {
-            console.log(error);
+            throw new Error(error);
           }
         }, 1000);
       }

@@ -5,8 +5,6 @@
 </template>
 
 <script>
-  import { find } from 'lodash';
-
   export default {
     name: 'AppDomain',
     props: ['domain'],
