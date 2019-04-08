@@ -17,7 +17,7 @@
           <small>Yearly Cost</small>
         </div>
       </div>
-      <button class="tile" @onClick="enableAutoRewnew">
+      <button class="tile" @click="enableAutoRenew">
         <div class="value" v-if="domain[3]">On</div>
         <div class="value" v-else>Off</div>
 
@@ -157,7 +157,7 @@
       });
     },
     methods: {
-      enableAutoRewnew() {
+      enableAutoRenew() {
         const signingService = window.connex.vendor.sign('tx');
         const enableAutoRewnewABI = find(this.$contract.abi, { name: 'enableAutoRewnew' });
         const enableAutoRewnew = window.connex.thor.account(this.$address).method(enableAutoRewnewABI);
@@ -317,7 +317,7 @@
     }
 
     .tile {
-      border: none;
+      border: 2px dashed #FFAA6E;
       cursor: pointer;
       font-size: initial;
 
@@ -327,7 +327,6 @@
       }
     }
   }
-
 
   .value {
     font-family: 'Rubik', sans-serif;
