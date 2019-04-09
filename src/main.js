@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import WebFont from 'webfontloader';
 import VueScrollTo from 'vue-scrollto';
+import VTooltip from 'v-tooltip';
 import 'css-doodle';
 
 import Registry from '@/build/contracts/Registry.json';
@@ -18,7 +19,10 @@ import getNetworkMixin from '@/mixins/getNetwork';
 const { getNetwork } = getNetworkMixin.methods;
 
 Vue.config.productionTip = false;
-Vue.use(VueRouter, VueScrollTo);
+
+Vue.use(VueRouter);
+Vue.use(VueScrollTo);
+Vue.use(VTooltip);
 
 if (!window.customElements || !document.head.attachShadow) {
   document.body.classList.add('no-doodle-support');

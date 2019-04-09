@@ -20,6 +20,8 @@
 </script>
 
 <style lang="scss">
+  @import './assets/tooltip.scss';
+
   * {
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;

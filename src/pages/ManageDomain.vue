@@ -2,7 +2,9 @@
   <div class="container">
     <h2>{{ domain[0] }}.vet</h2>
 
-    <AddressAvatar :signer="resolver" text="Resolver:" />
+    <div class="address-container">
+      <AddressAvatar :signer="resolver" text="Resolver:" />
+    </div>
 
     <div class="info" v-if="domain[0]">
       <div>
@@ -17,7 +19,13 @@
           <small>Yearly Cost</small>
         </div>
       </div>
-      <button class="tile" @click="enableAutoRenew">
+      <button
+        class="tile"
+        @click="enableAutoRenew"
+        v-tooltip="{
+          content: 'Would you like your domain to auto renew?',
+          offset: 10
+        }">
         <div class="value" v-if="domain[3]">On</div>
         <div class="value" v-else>Off</div>
 
@@ -31,6 +39,61 @@
           <small>Expiry Date</small>
         </div>
       </div>
+    </div>
+
+   <div class="info" v-if="domain[0]">
+      <button
+        class="tile"
+        v-tooltip="{
+          content: 'If autoRenew is off and the domain is past its expiry date, popDomain can be called to delete the domain and refund the bond to its owner.',
+          offset: 10
+        }">
+        <div class="value">
+          <img src="@/assets/pop.png" />
+        </div>
+        <div class="label">
+          <small>Pop Domain</small>
+        </div>
+      </button>
+      <button
+        class="tile"
+        v-tooltip="{
+          content: 'This function will use the domain\'s bond to top-up the domains\' domainExpires timer.',
+          offset: 10
+        }">
+        <div class="value">
+          <img src="@/assets/collect.png" />
+        </div>
+        <div class="label">
+          <small>Collect Dues</small>
+        </div>
+      </button>
+      <button
+        class="tile"
+        v-tooltip="{
+          content: 'Lets the owner of a domain deregister their domain and receive their bond back.',
+          offset: 10
+        }">
+        <div class="value">
+          <img src="@/assets/withdraw.png" />
+        </div>
+        <div class="label">
+          <small>Withdraw Early</small>
+        </div>
+      </button>
+      <button
+        class="tile"
+        v-tooltip="{
+          content: 'If a user registers a domain that is too short, anyone can call this to delete their domain.',
+          offset: 10
+        }">
+        <div class="value">
+          <img src="@/assets/invalidate.png" />
+        </div>
+        <div class="label">
+          <small>Invalidate Domain</small>
+        </div>
+      </button>
     </div>
 
     <form @submit.prevent="setDomain" class="form">
@@ -303,7 +366,7 @@
 
   .info {
     align-items: center;
-    margin-top: 50px;
+    margin-top: 12px;
     display: flex;
 
     > div,
@@ -317,7 +380,7 @@
     }
 
     .tile {
-      border: 2px dashed #FFAA6E;
+      border: 1px dashed #FFAA6E;
       cursor: pointer;
       font-size: initial;
 
@@ -332,6 +395,14 @@
     font-family: 'Rubik', sans-serif;
     font-size: 1.2rem;
     margin-bottom: 10px;
+
+    img {
+      width: 25px;
+    }
+  }
+
+  .address-container {
+    margin-bottom: 50px;
   }
 
 </style>
