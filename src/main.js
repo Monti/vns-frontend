@@ -40,20 +40,8 @@ const router = new VueRouter({
   mode: 'history',
 });
 
-getNetwork().then(networkId => {
-  if (networkId === 74) {
-    // mainnet
-    Vue.prototype.$address = '0xa94eCb69c9303a5CF27D694602eCE285dBf72672';
-  } else if (networkId === 39) {
-    // testnet
-    Vue.prototype.$address = '0xE16d21d50b032eeA28dE721a695Eef67b0B20bfd';
-  }
-});
-
 Vue.prototype.$contract = Registry;
-
 // console.log(JSON.stringify(Registry.bytecode))
-
 
 WebFont.load({
   google: {
@@ -64,8 +52,19 @@ WebFont.load({
   }
 });
 
-new Vue({
-  router,
-  el: "#app",
-  components: { App }
+
+getNetwork().then(networkId => {
+  if (networkId === 74) {
+    // mainnet
+    Vue.prototype.$address = '0xa94eCb69c9303a5CF27D694602eCE285dBf72672';
+  } else if (networkId === 39) {
+    // testnet
+    Vue.prototype.$address = '0xE16d21d50b032eeA28dE721a695Eef67b0B20bfd';
+  }
+
+  new Vue({
+    router,
+    el: "#app",
+    components: { App },
+  });
 });
