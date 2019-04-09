@@ -19,6 +19,15 @@
           <small>Yearly Cost</small>
         </div>
       </div>
+      <div>
+        <div class="value">{{ domain[4] | moment }}</div>
+        <div class="label">
+          <small>Expiry Date</small>
+        </div>
+      </div>
+    </div>
+
+   <div class="info" v-if="domain[0]">
       <button
         class="tile"
         @click="enableAutoRenew"
@@ -33,15 +42,6 @@
           <small>Auto Renew</small>
         </div>
       </button>
-      <div>
-        <div class="value">{{ domain[4] | moment }}</div>
-        <div class="label">
-          <small>Expiry Date</small>
-        </div>
-      </div>
-    </div>
-
-   <div class="info" v-if="domain[0]">
       <button
         class="tile"
         v-tooltip="{
