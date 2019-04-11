@@ -22,41 +22,47 @@
               <span v-else>Start Auction</span>
             </Button>
             <small>then</small>
-            <Button @onClick="addBid" :disabled="addBidDisabled || bid">
+            <Button
+              @onClick="addBid"
+              :disabled="addBidDisabled || bid">
               Add A Bid
             </Button>
-
-            <div v-if="bid" class="addBid">
-
-              <div v-if="error" class="error">
-                <small>You need to enter a secret</small>
-              </div>
-
-              <form @submit.prevent="submit" ref="form">
-                <AppInput
-                  type="text"
-                  size="medium"
-                  v-model="secret"
-                  autofocus="true"
-                  placeholder="type your secret"
-                />
-
-                <AppInput
-                  type="number"
-                  size="medium"
-                  min="1000"
-                  v-model="bid"
-                  placeholder="type your bid (minimum 1000 VET)"
-                />
-
-                <Button>Add Bid</Button>
-              </form>
-            </div>
-
           </div>
         </div>
       </section>
     </div>
+
+    <div v-if="bid" class="addBid">
+
+      <div v-if="error" class="error">
+        <small>You need to enter a secret</small>
+      </div>
+
+      <form @submit.prevent="submit" ref="form">
+        <AppInput
+          type="text"
+          size="medium"
+          v-model="secret"
+          autofocus="true"
+          placeholder="type your secret"
+        />
+
+        <label class="info">
+          Remember you will be attaching a good behavior bond of 5000 VET. 
+        </label>
+
+        <AppInput
+          type="number"
+          size="medium"
+          min="1000"
+          v-model="bid"
+          placeholder="type your bid (minimum 1000 VET)"
+        />
+
+        <Button>Add Bid</Button>
+      </form>
+    </div>
+
   </div>
 </template>
 
@@ -224,7 +230,7 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin: 50px 0;
+    margin-top: 50px;
 
     h3 {
       font-size: 3rem;
@@ -272,11 +278,15 @@
   }
 
   .addBid {
-    position: absolute;
     text-align: right;
     top: 100%;
-    margin-top: 20px;
     width: 100%;
+    margin-top: 30px;
+
+    .info {
+      margin-bottom: 10px;
+      font-size: 80%;
+    }
 
     .input {
       margin-bottom: 20px;

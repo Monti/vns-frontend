@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="actions">
-        <Button @onClick="finalizeBidding" size="medium">Finalize Bid</Button>
+        <Button @onClick="finalizeBidding" size="medium">Finalize Bidding</Button>
         <small>then</small>
         <Button @onClick="revealBid" size="medium">Reveal Bid</Button>
         <small>then</small>
@@ -145,7 +145,7 @@
         const finalizeAuction = window.connex.thor.account(this.$address).method(finalizeAuctionABI);
 
         const comment = 'finalize auction';
-        const clause = finalizeAuction.asClause(this.auctionID)
+        const clause = finalizeAuction.asClause(this.auctionID);
 
         signingService
           .signer(window.signer)
