@@ -16,7 +16,15 @@
           </div>
           <div class="actions">
             <Button @onClick="startAuction" :disabled="startAuctionSuccess || auctionAlreadyStarted">
-              <span v-if="loading">Loading</span>
+              <div class="loader" v-if="loading">
+                <span>
+                  Loading
+                </span>
+                <vue-loading
+                  type="spin"
+                  color="#000000"
+                  :size="{ width: '20px', height: '20px' }"></vue-loading>
+              </div>
               <span v-else-if="startAuctionSuccess">Auction Started</span>
               <span v-else-if="auctionAlreadyStarted">Auction Already Started</span>
               <span v-else>Start Auction</span>
@@ -190,6 +198,7 @@
           .request([ clause ]);
       },
       getReceipt({ txid }) {
+        const url = new URL(window.location.href);
         this.loading = true;
 
         this.receiptPoll = setInterval(async () => {
@@ -199,7 +208,9 @@
               this.loading = false;
 
               if (!tx.reverted) {
-                window.location.reload(false); 
+                url.searchParams.set('domain', this.domain);
+                window.location.href = url.href;
+
                 this.addBidDisabled = false;
                 this.startAuctionSuccess = true;
               }
@@ -274,6 +285,14 @@
 
     small {
       margin: 0 20px;
+    }
+
+    .loader {
+      display: flex;
+
+      span {
+        margin-right: 10px;
+      }
     }
   }
 

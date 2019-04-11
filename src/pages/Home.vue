@@ -114,7 +114,21 @@
         domainAvailable: null,
       }
     },
+    mounted() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const domain = urlParams.get('domain');
+
+      if (domain) {
+        this.domain = domain;
+        this.init();
+      }
+    },
     methods: {
+      init() {
+        this.$nextTick(() => {
+          this.submit();
+        });
+      },
       unlock() {
         const content = 'Confirm that you would like this site to access your account';
 
