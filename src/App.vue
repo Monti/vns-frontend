@@ -71,10 +71,14 @@
   }
 
   .main-container {
-    min-height: 100vh; /* will cover the 100% of viewport */
+    min-height: 100vh;
     overflow: hidden;
     display: block;
     position: relative;
-    padding-bottom: 500px; /* height of your footer */
+    padding-bottom: 500px;
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      padding-bottom: 300px;
+    }
   }
 </style>
