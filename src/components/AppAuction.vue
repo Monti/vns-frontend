@@ -1,15 +1,18 @@
 <template>
   <div>
     <div class="auction-wrapper">
+      <div class="info">
+        <router-link to="help">
+          <img src="@/assets/question.png" />
+        </router-link>
+      </div>
       <div>
         <div class="domain">{{ auction[3] }}.vet</div>
-        <div class="detail">
-          <small v-if="!auctionEnded">auction end: {{ auction[2] | moment }}</small>
-          <small v-if="auctionEnded">auction ended at {{ auction[2] | moment }}</small>
+        <div class="detail" v-if="!auctionEnded">
+          <small>bidding ends at: {{ auction[2] | moment }}</small>
         </div>
-        <div class="detail">
-          <small v-if="auction[4]">bidding has ended</small>
-          <small v-else>bidding has not ended</small>
+        <div class="detail" v-if="auctionEnded">
+          <small>bidding has ended</small>
         </div>
         <div class="detail">
           <small v-if="revealStarted">reveal ended at {{ auction[5] | moment }}</small>
@@ -173,6 +176,7 @@
   .auction-wrapper {
     display: flex;
     justify-content: space-between;
+    position: relative;
   }
 
   .actions {
@@ -217,6 +221,16 @@
         color: #E87D9B;
         margin: 0;
       }
+    }
+  }
+
+  .info {
+    position: absolute;
+    right: 0;
+    width: 20px;
+
+    img {
+      width: 100%;
     }
   }
 </style>

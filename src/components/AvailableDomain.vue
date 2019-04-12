@@ -67,7 +67,26 @@
           placeholder="type your bid (minimum 1000 VET)"
         />
 
-        <Button>Add Bid</Button>
+        <Button :disabled="addBidSuccess">
+          <div class="loader" v-if="addBidPending">
+            <span>
+              Loading
+            </span>
+            <vue-loading
+              type="spin"
+              color="#000000"
+              :size="{ width: '20px', height: '20px' }"></vue-loading>
+          </div>
+          <div v-else-if="addBidSuccess">Your bid was added!</div>
+          <div v-else>Add Bid</div>
+        </Button>
+        <div class="notice" v-if="showNotice">
+          <small>
+            To view your auctions go to
+            <br />
+            <router-link to="manage">Manage Auctions & Domains :)</router-link>
+          </small>
+        </div>
       </form>
     </div>
 
@@ -104,7 +123,10 @@
         selected: true,
         loading: false,
         auctionID: null,
+        showNotice: false,
+        addBidSuccess: false,
         addBidDisabled: true,
+        addBidPending: false,
         startAuctionSuccess: false,
         auctionAlreadyStarted: false,
       }
@@ -115,9 +137,6 @@
           this.init();
         }
       }
-    },
-    mounted() {
-      this.init();
     },
     methods: {
       submit() {
@@ -195,26 +214,54 @@
           .gas(150000)
           .link('https://connex.vecha.in/{txid')
           .comment(comment)
-          .request([ clause ]);
+          .request([ clause ])
+          .then(({ txid }) => {
+            this.getBidReceipt({ txid });
+          });
+      },
+      getBidReceipt({ txid }) {
+        this.addBidPending = true;
+
+        this.bidReceiptPoll = setInterval(async () => {
+          try {
+            const tx = window.connex.thor.transaction(txid).getReceipt;
+
+            if (tx) {
+              if (!tx.reverted) {
+                this.addBidPending = false;
+                this.addBidSuccess = true;
+
+                setTimeout(() => {
+                  this.showNotice = true
+                }, 500);
+              }
+
+              clearInterval(this.bidReceiptPoll);
+            }
+          } catch(error) {
+            throw new Error(error);
+          }
+
+        }, 5000);
       },
       getReceipt({ txid }) {
         const url = new URL(window.location.href);
         this.loading = true;
 
         this.receiptPoll = setInterval(async () => {
+          this.init();
+
           try {
-            const tx = window.connex.thor.transaction(txid).getReceipt;
-            if (tx) {
+            const tx = await window.connex.thor.transaction(txid).getReceipt();
+
+            if (tx && tx.reverted) {
+              clearInterval(this.receiptPoll);
+            }
+
+            if (parseInt(this.auctionID) !== 0) {
               this.loading = false;
-
-              if (!tx.reverted) {
-                url.searchParams.set('domain', this.domain);
-                window.location.href = url.href;
-
-                this.addBidDisabled = false;
-                this.startAuctionSuccess = true;
-              }
-
+              this.addBidDisabled = false;
+              this.startAuctionSuccess = true;
               clearInterval(this.receiptPoll);
             }
           } catch(error) {
@@ -286,13 +333,13 @@
     small {
       margin: 0 20px;
     }
+  }
 
-    .loader {
-      display: flex;
+  .loader {
+    display: flex;
 
-      span {
-        margin-right: 10px;
-      }
+    span {
+      margin-right: 10px;
     }
   }
 
@@ -319,6 +366,9 @@
         margin: 0;
       }
     }
+  }
 
+  .notice {
+    margin-top: 5px;
   }
 </style>

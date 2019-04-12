@@ -9,7 +9,7 @@
     </p>
 
     <p>
-      During the bidding period, a bidder does not actually send her bid, but only a hashed version of it. Since it is currently considered practically impossible to find two (sufficiently long) values whose hash values are equal, the bidder commits to the bid by that. After the end of the bidding period, the bidders have to reveal their bids: They send their values unencrypted and the contract checks that the hash value is the same as the one provided during the bidding period.
+      During the bidding period, a bidder does not actually send her bid, but only a hashed version of it, (along with a good behvaior bond more on that below). Since it is currently considered practically impossible to find two (sufficiently long) values whose hash values are equal, the bidder commits to the bid by that. After the end of the bidding period, the bidders have to reveal their bids: They send their values unencrypted and the contract checks that the hash value is the same as the one provided during the bidding period.
     </p>
 
     <p>
@@ -18,7 +18,9 @@
 
     <h3>Why send a good behavior bond?</h3>
 
-    <p>To be continued...</p>
+    <p>
+      You will need to attach a good behavior bond which will be added to your domains bond if you are successful or refunded if you are not the highest bidder. The bond prevents auction/domain squatting and other issues.
+    </p>
   </div>
 </template>
 
