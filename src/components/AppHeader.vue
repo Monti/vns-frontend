@@ -70,6 +70,10 @@
     .container {
       height: 100%;
     }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      margin-bottom: 20px;
+    }
   }
 
   .background {
