@@ -192,6 +192,19 @@
     button {
       margin-right: 30px;
     }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      flex-direction: column;
+
+      a, button {
+        width: 100%;
+      }
+
+      button {
+        margin-right: 0;
+        margin-bottom: 30px;
+      }
+    }
   }
 
   form {
@@ -233,6 +246,16 @@
 
   .unlock-rewards {
     display: flex;
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      width: 100%;
+
+      button {
+        font-size: 0.9rem;
+        width: 100%;
+        padding: 10px 20px;
+      }
+    }
   }
 
   .main {
@@ -247,6 +270,18 @@
       align-items: center;
       display: flex;
       margin: 0 20px;;
+    }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+      align-items: center;
+      flex-direction: column;
+
+      span {
+        display: block;
+        margin: 20px 0;
+        width: 100%;
+        text-align: center;
+      }
     }
   }
 
