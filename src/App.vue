@@ -63,6 +63,11 @@
   a {
     color: #0a0c27;
     text-decoration: none;
+    transition: all 0.2s linear;
+
+    &:hover {
+      color: #ffa56d;
+    }
   }
 
   .main-container {

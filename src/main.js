@@ -12,6 +12,7 @@ import App from './App.vue';
 
 import Send from '@/pages/Send.vue';
 import Home from '@/pages/Home.vue';
+import Help from '@/pages/Help.vue';
 import Manage from '@/pages/Manage.vue';
 import ManageDomain from '@/pages/ManageDomain.vue';
 
@@ -31,6 +32,7 @@ const routes = [
   { path: '/manage', component: Manage, name: 'manage' },
   { path: '/manage/:id', component: ManageDomain, name: 'manageDomain' },
   { path: '/send', component: Send, name: 'send' },
+  { path: '/help', component: Help, name: 'help' },
 ];
 
 const router = new VueRouter({

@@ -8,7 +8,7 @@
       <template v-slot:description>
         The VeChain Name Service is a distributed, open and extensible naming system based on the VeChain blockchain.
         VNS eliminates the need to copy or type long addresses. With VNS, you'll be able to send money to your friend at <span>raleighca.vet</span> instead of <span>0x4cbe58c50480...</span> or interact with your favorite contract at <span>mycontract.vet</span>.
-        For more information visit our <a href="https://vechain-dns.gitbook.io/vns-docs/" target="_blank">Documentation</a>.
+        For more information visit our <a href="https://vechain-dns.gitbook.io/vns-docs/" target="_blank">Documentation</a> or visit our <router-link to="help">Help page</router-link>.
       </template>
       <template v-slot:extra>
         <div class="actions">
