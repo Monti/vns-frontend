@@ -11,7 +11,7 @@
     "@vechain/picasso": "^1.0.4",
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "css-doodle": "^0.6.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "truffle": "^5.0.8",
     "v-tooltip": "^2.0.0-rc.33",
